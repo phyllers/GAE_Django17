@@ -6,6 +6,8 @@ from testapp.forms import CreateGreetingForm
 from testapp.models import Greeting
 from django.shortcuts import render
 from django.shortcuts import redirect
+import django
+
 
 MEMCACHE_GREETINGS = 'greetings'
 
@@ -16,7 +18,8 @@ def list_greetings(request):
         cache.add(MEMCACHE_GREETINGS, greetings)
     return render(request, 'testapp/index.html',
                               {'greetings': greetings,
-                               'form': CreateGreetingForm()})
+                               'form': CreateGreetingForm(),
+                               'djversion': django.get_version()})
 
 def create_greeting(request):
     if request.method == 'POST':

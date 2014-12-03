@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+  <h2>Django Version: {{ djversion }}</h2>
+
   <h2>Top 10 Most Recent Guestbook Entries</h2>
   {% for greeting in greetings %}
     {% if greeting.author %}
