@@ -1,0 +1,17 @@
+application: striking-berm-771
+version: django17
+runtime: python27
+api_version: 1
+threadsafe: true
+
+libraries:
+- name: MySQLdb
+  version: "latest"
+
+handlers:
+- url: /.*
+  script: main.application
+- url: /static/admin
+  static_dir: static/admin
+  expiration: 0
+
