@@ -19,6 +19,8 @@
 
     {% if api_result2 %}
         <h2>ID: {{ api_result2.item_id }}</h2>
+        <h2>Content: {{ api_result2.data.0.content }}</h2>
+        <p>{{ api_result2 }}</p>
     {% endif %}
 
     <code>
