@@ -6,12 +6,25 @@ from testapp.forms import CreateGreetingForm
 from testapp.models import Greeting
 from django.shortcuts import render
 from django.shortcuts import redirect
+from urllib2 import Request, urlopen, URLError
 import django
+import json
 
 
 MEMCACHE_GREETINGS = 'greetings'
 
 def list_greetings(request):
+    req = Request('http://api.striking-berm-771.appspot.com/')
+    req2 = Request('http://api.striking-berm-771.appspot.com/1')
+    try:
+        # response = urlopen(req)
+        # api_result = response.read()
+        response2 = urlopen(req2)
+        api_result2 = json.load(response2)
+
+    except URLError, e:
+        api_result = 'No response: ', e
+        api_result2 = 'No response: ', e
     greetings = cache.get(MEMCACHE_GREETINGS)
     if greetings is None:
         greetings = Greeting.objects.all().order_by('-date')[:10]
@@ -19,7 +32,9 @@ def list_greetings(request):
     return render(request, 'testapp/index.html',
                               {'greetings': greetings,
                                'form': CreateGreetingForm(),
-                               'djversion': django.get_version()})
+                               'djversion': django.get_version(),
+                               # 'api_result': api_result,
+                               'api_result2': api_result2, })
 
 def create_greeting(request):
     if request.method == 'POST':
