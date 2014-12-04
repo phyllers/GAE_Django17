@@ -23,6 +23,13 @@
         <p>{{ api_result2 }}</p>
     {% endif %}
 
+    {% if greetings %}
+        <ul>
+            {% for greeting in api_greetings.items %}
+            <li>{{ greeting.message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <code>
         {{ api_result }}
     </code>

@@ -14,17 +14,25 @@ import json
 MEMCACHE_GREETINGS = 'greetings'
 
 def list_greetings(request):
-    req = Request('http://api.striking-berm-771.appspot.com/')
-    req2 = Request('http://api.striking-berm-771.appspot.com/1')
+    # req = Request('http://api.striking-berm-771.appspot.com/')
+    # req2 = Request('http://api.striking-berm-771.appspot.com/1')
+    # try:
+    #     # response = urlopen(req)
+    #     # api_result = response.read()
+    #     response2 = urlopen(req2)
+    #     api_result2 = json.load(response2)
+    #
+    # except URLError, e:
+    #     api_result = 'No response: ', e
+    #     api_result2 = 'No response: ', e
+    #
+    req3 = Request('https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting')
     try:
-        # response = urlopen(req)
-        # api_result = response.read()
-        response2 = urlopen(req2)
-        api_result2 = json.load(response2)
-
+        res = urlopen(req3)
+        api_greetings = json.load(res)
     except URLError, e:
-        api_result = 'No response: ', e
-        api_result2 = 'No response: ', e
+        api_greetings = 'No Response', e
+
     greetings = cache.get(MEMCACHE_GREETINGS)
     if greetings is None:
         greetings = Greeting.objects.all().order_by('-date')[:10]
@@ -34,7 +42,9 @@ def list_greetings(request):
                                'form': CreateGreetingForm(),
                                'djversion': django.get_version(),
                                # 'api_result': api_result,
-                               'api_result2': api_result2, })
+                               # 'api_result2': api_result2,
+                               'api_greetings': api_greetings,
+                               })
 
 def create_greeting(request):
     if request.method == 'POST':
