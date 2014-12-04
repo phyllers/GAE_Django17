@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+
 {% block content %}
-    <h2>Django Version: {{ djversion }}</h2>
+
 
     <h2>Top 10 Most Recent Guestbook Entries</h2>
     {% for greeting in greetings %}
@@ -24,6 +25,7 @@
     {% endif %}
 
     {% if greetings %}
+        <h2>Content from Endpoints API</h2>
         <ul>
             {% for greeting in api_greetings.items %}
             <li>{{ greeting.message }}</li>
@@ -33,4 +35,6 @@
     <code>
         {{ api_result }}
     </code>
+
+    <p>Django Version: {{ djversion }}</p>
 {% endblock %}

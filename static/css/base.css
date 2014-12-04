@@ -1,3 +1,16 @@
 body {
-    background-color: #ccc;
+    background-color: #ddd;
+    font-family: "Arial", "Helvetica", sans-serif;
+}
+
+header {
+    float: right;
+}
+
+blockquote {
+    margin: 10px 20px;
+}
+
+textarea {
+    height: 40px;
 }
