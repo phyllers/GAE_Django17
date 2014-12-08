@@ -9,27 +9,61 @@ from django.shortcuts import redirect
 from urllib2 import Request, urlopen, URLError
 import django
 import json
+import requests
+
+# from requests_oauthlib import OAuth1
+
+# !!! Commented out API authorization code until I can get it to work with Endpoints !!!
+# from apiclient import discovery
+# import httplib2
+# import oauth2client
+# from oauth2client import tools
+# import argparse
+
+# CLIENT_ID = '1042486265945-969e0e0blptg1l9suhj7ppn5qjal8idb.apps.googleusercontent.com'
+# CLIENT_SECRET = 'gGcU6r-00xB23my8MUzvzn5C'
+# SCOPE = 'https://www.googleapis.com/auth/userinfo.email'
+# USER_AGENT = 'my-app'
+# OAUTH_DISPLAY_NAME = 'HAPPY APPY'
+#
+# API_ROOT = 'https://striking-berm-771.appspot.com/_ah/api'
+# API = 'gae_endpoints'
+# VERSION = 'v1'
 
 
 MEMCACHE_GREETINGS = 'greetings'
 
 def list_greetings(request):
-    # req = Request('http://api.striking-berm-771.appspot.com/')
-    # req2 = Request('http://api.striking-berm-771.appspot.com/1')
-    # try:
-    #     # response = urlopen(req)
-    #     # api_result = response.read()
-    #     response2 = urlopen(req2)
-    #     api_result2 = json.load(response2)
+
+    # storage = oauth2client.file.Storage('guestbook.dat')
+    # credentials = storage.get()
+    # parser = argparse.ArgumentParser(
+    #     description='Auth sample',
+    #     formatter_class=argparse.RawDescriptionHelpFormatter,
+    #     parents=[tools.argparser])
+    # flags = parser.parse_args('')
     #
-    # except URLError, e:
-    #     api_result = 'No response: ', e
-    #     api_result2 = 'No response: ', e
-    #
-    req3 = Request('https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting')
+    # if credentials is None or credentials.invalid:
+    #     flow = oauth2client.client.OAuth2WebServerFlow(
+    #         client_id=CLIENT_ID,
+    #         client_secret=CLIENT_SECRET,
+    #         scope=SCOPE,
+    #         user_agent=USER_AGENT,
+    #         xoauth_displayname=OAUTH_DISPLAY_NAME
+    #     )
+    #     credentials = tools.run_flow(flow, storage, flags)
+    # http = httplib2.Http()
+    # http = credentials.authorize(http)
+    # discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (API_ROOT, API, VERSION)
     try:
-        res = urlopen(req3)
-        api_greetings = json.load(res)
+        # service = discovery.build(API, VERSION, discoveryServiceUrl=discovery_url, http=http)
+        # response = service.greetings()
+        # api_greetings = service
+
+        url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/'
+        # auth = OAuth1(CLIENT_ID, CLIENT_SECRET)
+        req3 = Request(url)
+        api_greetings = json.load(urlopen(req3))
     except URLError, e:
         api_greetings = 'No Response', e
 
@@ -41,8 +75,6 @@ def list_greetings(request):
                               {'greetings': greetings,
                                'form': CreateGreetingForm(),
                                'djversion': django.get_version(),
-                               # 'api_result': api_result,
-                               # 'api_result2': api_result2,
                                'api_greetings': api_greetings,
                                })
 

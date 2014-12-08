@@ -24,13 +24,14 @@
         <p>{{ api_result2 }}</p>
     {% endif %}
 
-    {% if greetings %}
+    {% if api_greetings %}
         <h2>Content from Endpoints API</h2>
         <ul>
             {% for greeting in api_greetings.items %}
-            <li>{{ greeting.message }}</li>
+            <li>{{ greeting.content }}: {{ greeting.date }}</li>
             {% endfor %}
         </ul>
+        <p>{{ api_greetings }}</p>
     {% endif %}
     <code>
         {{ api_result }}
