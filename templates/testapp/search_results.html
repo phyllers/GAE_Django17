@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block header %}
+<link type="text/css" rel="stylesheet" href="{% static 'css/search.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+
+    <h2>Search Results Page</h2>
+
+    {% for item in data %}
+    <div class="result-item">
+        <input type="checkbox" class="result-selector" />
+        <div class="result-content">
+            <h4>{{ item.name }}</h4>
+            <p>{{ item.info }}</p>
+        </div>
+    </div>
+    {% endfor %}
+
+    <a type="button" class="btn btn-primary" href="#">Save As Spreadsheet</a>
+{% endblock %}

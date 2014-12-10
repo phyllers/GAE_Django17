@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block header %}
+<link type="text/css" rel="stylesheet" href="{% static 'css/search.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+
+    <h2>Search Page</h2>
+
+    <div class="placeholder">
+
+    <p>search features go here</p>
+
+    </div>
+
+    <a type="submit" class="btn btn-primary" href="/search_results">Search</a>
+{% endblock %}

@@ -1,0 +1,15 @@
+.result-item {
+
+}
+
+.result-item .result-selector {
+    float: left;
+    margin: 12px 10px 10px 10px;
+    position: absolute;
+
+}
+
+.result-item .result-content {
+    margin-left: 35px;
+    display: inline-block;
+}
