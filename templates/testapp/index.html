@@ -1,7 +1,24 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <h1>The quick brown fox jumped over the lazy dog</h1>
+    <h2>The quick brown fox jumped over the lazy dog</h2>
+    <h3>The quick brown fox jumped over the lazy dog</h3>
+    <h4>The quick brown fox jumped over the lazy dog</h4>
+    <h5>The quick brown fox jumped over the lazy dog</h5>
 
+    <button type="button" class="btn btn-default">Default</button>
+    <button type="button" class="btn btn-primary">Primary</button>
+    <button type="button" class="btn btn-success">Success</button>
+    <button type="button" class="btn btn-info">Info</button>
+    <button type="button" class="btn btn-warning">Warning</button>
+    <button type="button" class="btn btn-danger">Danger</button>
+
+    <div class="btn-group">
+        <button type="button" class="btn btn-default">Left</button>
+        <button type="button" class="btn btn-default">Middle</button>
+        <button type="button" class="btn btn-default">Right</button>
+    </div>
 
     <h2>Top 10 Most Recent Guestbook Entries</h2>
     {% for greeting in greetings %}
@@ -27,9 +44,13 @@
     {% if api_greetings %}
         <h2>Content from Endpoints API</h2>
         <ul>
-            {% for greeting in api_greetings.items %}
-            <li>{{ greeting.content }}: {{ greeting.date }}</li>
-            {% endfor %}
+            {% if api_greetings.kind == 'gae_endpoints#greetings' %}
+                {% for greeting in api_greetings.items %}
+                <li>{{ greeting.content }}: {{ greeting.date }}</li>
+                {% endfor %}
+            {% else %}
+                <li>{{ api_greetings.content }}: {{ api_greetings.date }}</li>
+            {% endif %}
         </ul>
         <p>{{ api_greetings }}</p>
     {% endif %}

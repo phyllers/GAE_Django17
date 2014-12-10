@@ -14,6 +14,18 @@
 
     <p>search features go here</p>
 
+    <h5>Tumor Types</h5>
+    <select multiple="true">
+        {% for type in tumor_types %}
+            <option value="{{ type.id }}">{{ type.id }} - {{ type.label }}</option>
+        {% endfor %}
+    </select>
+
+    <h5>Experiment Types</h5>
+
+    <h5>Patient Characteristics</h5>
+
+
     </div>
 
     <a type="submit" class="btn btn-primary" href="/search_results">Search</a>

@@ -60,7 +60,7 @@ def list_greetings(request):
         # response = service.greetings()
         # api_greetings = service
 
-        url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/'
+        url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/1'
         # auth = OAuth1(CLIENT_ID, CLIENT_SECRET)
         req3 = Request(url)
         api_greetings = json.load(urlopen(req3))
@@ -72,7 +72,8 @@ def list_greetings(request):
         greetings = Greeting.objects.all().order_by('-date')[:10]
         cache.add(MEMCACHE_GREETINGS, greetings)
     return render(request, 'testapp/index.html',
-                              {'greetings': greetings,
+                              {'request': request,
+                               'greetings': greetings,
                                'form': CreateGreetingForm(),
                                'djversion': django.get_version(),
                                'api_greetings': api_greetings,
@@ -102,3 +103,28 @@ def create_new_user(request):
         form = UserCreationForm()
     return render(request, 'testapp/user_create_form.html',
         {'form': form})
+
+def search(request):
+    tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
+                   {'id': 'BRCA', 'label': 'Breast Invasive Carcinoma'},
+                   {'id': 'COAD', 'label': 'Colon Adenocarcinoma'},
+                   {'id': 'GBM', 'label': 'Glioblastoma Multiforme'},
+                   {'id': 'HNSC', 'label': 'Head and Neck Squamous Cell Carcinoma'},
+                   {'id': 'KIRC', 'label': 'Kidney Renal Clear Cell Carcinoma'},
+                   {'id': 'LUAD', 'label': 'Lung Adenocarcinoma'},
+                   {'id': 'LUSC', 'label': 'Lung Squamous Cell Carcinoma'},
+                   {'id': 'OV', 'label': 'Ovarian Serous Cystadenocarcinoma'},
+                   {'id': 'READ', 'label': 'Rectum Adenocarcinoma'},
+                   {'id': 'UCEC', 'label': 'Uterine Corpus Endometrial Carcinoma'}]
+
+    return render(request, 'testapp/search.html', {'request': request,
+                                                   'tumor_types': tumor_types})
+
+def search_results(request):
+    fake_data = []
+    for i in range(1, 10):
+        fake_data.append({'name':'Some Title %i' % i,
+                          'info':'Kitty ipsum dolor sit amet, catnip sleep in the sink toss the mousie judging you, sleep on your keyboard judging you hiss hiss sunbathe lick. Fluffy fur zzz lay down in your way sniff claw, catnip knock over the lamp stretching litter box biting.'})
+    return render(request, 'testapp/search_results.html', {'request': request,
+                                                           'data': fake_data,})
+

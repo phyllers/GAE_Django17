@@ -1,10 +1,5 @@
 body {
-    background-color: #ddd;
-    font-family: "Arial", "Helvetica", sans-serif;
-}
-
-header {
-    float: right;
+    background-color: #E4E3E4;
 }
 
 blockquote {
@@ -13,4 +8,89 @@ blockquote {
 
 textarea {
     height: 40px;
+}
+
+a {
+    color: #555555;
+}
+
+a:hover {
+    color: #002F5B;
+}
+
+nav {
+    background-color: #D5DF3E;
+    float: right;
+    width: 100%;
+    border-bottom: 2px #006DC6 solid;
+}
+
+.navbar-nav {
+    margin: 7px 10px;
+}
+.navbar-nav > li {
+    display: inline-block;
+    padding: 0px;
+    margin-top: 4px;
+}
+.navbar-nav > li > a {
+    padding: 3px 8px;
+}
+.navbar-nav > li > a:hover {
+    background-color: #bec83c;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.navbar-nav > li.active {
+    background-color: #D5DF3E;
+    border-bottom: 2px #fff solid;
+}
+
+.navbar-brand {
+    height: 50px;
+    width: auto;
+    padding: 4px 10px  4px 30px;
+    margin-left: 10px;
+    margin-right: -10px;
+}
+.navbar-left {
+    width: 250px;
+}
+.navbar-right{
+}
+
+
+.inline-block { display: inline-block; }
+.block { display: block; }
+
+.placeholder {
+    padding: 10px;
+    width: 100%;
+    height: 400px;
+    border: 1px #000 dashed;
+    margin: 10px 0px;
+}
+.btn {
+    border-radius: 1px;
+}
+.btn-primary {
+    color: #333;
+    background-color: #D5DF3E;
+    border-color: #b8c233;
+}
+.btn-primary:hover {
+    color: #333;
+    background-color: #b8c233;
+    border-color: #b8c233;
+}
+
+.btn-success {
+    color: #333;
+    background-color: #89D889;
+    border-color: #76b876;
+}
+.btn-success:hover {
+    color: #333;
+    background-color: #76b876;
+    border-color: #76b876;
 }
