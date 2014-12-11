@@ -2,6 +2,20 @@
 
 }
 
+.panel-heading {
+    padding: 0px;
+}
+.panel-heading h5 {
+    margin: 0px;
+}
+.panel-heading h5 a {
+    padding: 10px 15px;
+    display: block;
+}
+.panel-heading h5 a:hover {
+    text-decoration: none;
+}
+
 .result-item .result-selector {
     float: left;
     margin: 12px 10px 10px 10px;

@@ -10,22 +10,54 @@
 
     <h2>Search Page</h2>
 
-    <div class="placeholder">
-
-    <p>search features go here</p>
-
-    <h5>Tumor Types</h5>
-    <select multiple="true">
-        {% for type in tumor_types %}
-            <option value="{{ type.id }}">{{ type.id }} - {{ type.label }}</option>
-        {% endfor %}
-    </select>
-
-    <h5>Experiment Types</h5>
-
-    <h5>Patient Characteristics</h5>
 
 
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>
+                <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseOne">
+                    Tumor Types
+                </a>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+                <select multiple="true">
+                    {% for type in tumor_types %}
+                        <option value="{{ type.id }}">{{ type.id }} - {{ type.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>
+                <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseTwo">
+                    Experiment Types
+                </a>
+            </h5>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>Find Experiment Types</p>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h5>
+                <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseThree">
+                    Patient Characteristics
+                </a>
+            </h5>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse">
+            <div class="panel-body">
+                <p>Put patient characteristics options here</p>
+            </div>
+        </div>
     </div>
 
     <a type="submit" class="btn btn-primary" href="/search_results">Search</a>
