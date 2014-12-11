@@ -105,7 +105,7 @@ def create_new_user(request):
         {'form': form})
 
 def css_test(request):
-    return render(request, 'testapp/css_test.html')
+    return render(request, 'testapp/css_test.html', {'request': request})
 
 def search(request):
     tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
