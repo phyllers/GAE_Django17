@@ -73,6 +73,10 @@ form table td {
 
 .inline-block { display: inline-block; }
 .block { display: block; }
+.space-top-10 { margin-top: 10px; }
+.space-bottom-10 { margin-bottom: 10px; }
+.space-left-10 { margin-left: 10px; }
+.space-right-10 { margin-right: 10px; }
 
 .btn {
     border-radius: 1px;
