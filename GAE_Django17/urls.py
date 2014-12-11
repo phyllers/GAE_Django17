@@ -33,5 +33,6 @@ urlpatterns = patterns('',
 
     url(r'^search/', views.search),
     url(r'^search_results/', views.search_results),
+    url(r'^css_test/', views.css_test),
 
 )

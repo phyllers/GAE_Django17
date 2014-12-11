@@ -2,17 +2,20 @@
 
 }
 
+#search-box {
+    margin-bottom: 10px;
+}
 .panel-heading {
     padding: 0px;
 }
 .panel-heading h5 {
     margin: 0px;
 }
-.panel-heading h5 a {
+.panel-heading a {
     padding: 10px 15px;
     display: block;
 }
-.panel-heading h5 a:hover {
+.panel-heading a:hover {
     text-decoration: none;
 }
 

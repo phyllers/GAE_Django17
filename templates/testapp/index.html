@@ -1,24 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>The quick brown fox jumped over the lazy dog</h1>
-    <h2>The quick brown fox jumped over the lazy dog</h2>
-    <h3>The quick brown fox jumped over the lazy dog</h3>
-    <h4>The quick brown fox jumped over the lazy dog</h4>
-    <h5>The quick brown fox jumped over the lazy dog</h5>
 
-    <button type="button" class="btn btn-default">Default</button>
-    <button type="button" class="btn btn-primary">Primary</button>
-    <button type="button" class="btn btn-success">Success</button>
-    <button type="button" class="btn btn-info">Info</button>
-    <button type="button" class="btn btn-warning">Warning</button>
-    <button type="button" class="btn btn-danger">Danger</button>
-
-    <div class="btn-group">
-        <button type="button" class="btn btn-default">Left</button>
-        <button type="button" class="btn btn-default">Middle</button>
-        <button type="button" class="btn btn-default">Right</button>
-    </div>
 
     <h2>Top 10 Most Recent Guestbook Entries</h2>
     {% for greeting in greetings %}
@@ -32,7 +15,7 @@
 
     <form action="/testapp/sign/" method="post">{% csrf_token %}
         <table>{{ form }}</table>
-        <input type="submit" value="Sign Guestbook"/>
+        <input class="btn btn-primary" type="submit" value="Sign Guestbook"/>
     </form>
 
     {% if api_result2 %}
@@ -52,11 +35,10 @@
                 <li>{{ api_greetings.content }}: {{ api_greetings.date }}</li>
             {% endif %}
         </ul>
-        <p>{{ api_greetings }}</p>
+        <pre>{{ api_greetings }}</pre>
     {% endif %}
-    <code>
-        {{ api_result }}
-    </code>
+
 
     <p>Django Version: {{ djversion }}</p>
+
 {% endblock %}

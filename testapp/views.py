@@ -60,7 +60,7 @@ def list_greetings(request):
         # response = service.greetings()
         # api_greetings = service
 
-        url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/1'
+        url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/'
         # auth = OAuth1(CLIENT_ID, CLIENT_SECRET)
         req3 = Request(url)
         api_greetings = json.load(urlopen(req3))
@@ -103,6 +103,9 @@ def create_new_user(request):
         form = UserCreationForm()
     return render(request, 'testapp/user_create_form.html',
         {'form': form})
+
+def css_test(request):
+    return render(request, 'testapp/css_test.html')
 
 def search(request):
     tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
