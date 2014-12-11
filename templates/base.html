@@ -9,29 +9,6 @@
     <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
     <script type="text/javascript" src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
-    <link type="text/css" rel="stylesheet" href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
-    <script type="text/javascript">
-        var config = {
-            apiKey: 'AIzaSyAYIKRQF5DMcTSn_77rhA_lkHlIBPFkhJo',
-            signInSuccessUrl: '/',
-            idps: ["google"],
-            oobActionUrl: '/',
-            siteName: 'this site'
-        };
-        // The HTTP POST body should be escaped by the server to prevent XSS
-        window.google.identitytoolkit.start(
-            '#gitkitWidgetDiv', // accepts any CSS selector
-            config,
-            'JAVASCRIPT_ESCAPED_POST_BODY');
-
-        window.google.identitytoolkit.signInButton(
-            '#goog-login', // accepts any CSS selector
-            {
-              widgetUrl: "http://localhost:8080/widget",
-              signOutUrl: "/",
-            });
-    </script>
     {% block header %}{% endblock %}
 </head>
 <body>
@@ -47,7 +24,6 @@
             </ul>
         </div>
         <div class="nav navbar-right">
-            <div id="goog-login" class="navbar-btn inline-block"></div>
             <div id="user-login" class="navbar-form inline-block">
                 <a href="/accounts/create_user/">Create User</a>
                 Hello
