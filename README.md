@@ -7,3 +7,7 @@ This app runs and deploys on my own personal GAE project. It uses a zip version 
 
 Hosted [Here](http://django17.striking-berm-771.appspot.com/)
 
+For SASS: run this from root directory 
+```
+sass --watch sass/main.sass:static/css/main.css
+```
