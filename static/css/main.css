@@ -65,26 +65,71 @@ nav {
 /********************************************
  * Overwriting Bootstrap
  ****************************************** */
-.btn {
+.btn, .btn-primary, .btn-primary:hover, .btn-success, .btn-success:hover {
+  color: #333333;
   border-radius: 1px; }
 
 .btn-primary {
-  color: #333333;
   background-color: #D5DF3E;
   border-color: #B8C233; }
   .btn-primary:hover {
-    color: #333333;
     background-color: #B8C233;
     border-color: #B8C233; }
 
 .btn-success {
-  color: #333333;
   background-color: #89D889;
   border-color: #76b876; }
   .btn-success:hover {
-    color: #333333;
     background-color: #76b876;
     border-color: #76b876; }
+
+.dropdown-menu {
+  border-radius: 1px;
+  margin: 0px; }
+
+.dropdown-toggle:hover {
+  background-color: #EEE; }
+
+.nav-tabs {
+  border-bottom: 1px solid #ddd; }
+  .nav-tabs > li.active > a {
+    border-radius: 1px 1px 0px 0px;
+    border-bottom: none; }
+  .nav-tabs > li:hover > a {
+    border-radius: 1px 1px 0px 0px;
+    border-bottom: none; }
+  .nav-tabs .navbar-right {
+    margin-top: 0px;
+    margin-right: -2px; }
+
+.tab-content {
+  background-color: #FFF;
+  padding: 5px 10px; }
+
+.breadcrumb {
+  background-color: #E4E3E4;
+  border-radius: 0px;
+  margin-bottom: 10px;
+  padding: 5px 15px; }
+
+.alert {
+  border-radius: 1px;
+  border: 5px solid transparent;
+  padding: 10px; }
+  .alert .close {
+    right: 0px; }
+  .alert.alert-success {
+    background-color: #E4E3E4;
+    border-color: #76b876; }
+  .alert.alert-info {
+    background-color: #E4E3E4;
+    border-color: #9dbccd; }
+  .alert.alert-warning {
+    background-color: #E4E3E4;
+    border-color: #d7c799; }
+  .alert.alert-danger {
+    background-color: #E4E3E4;
+    border-color: #d79c9a; }
 
 /********************************************
  * Handy Classes

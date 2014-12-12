@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from urllib2 import Request, urlopen, URLError
 import django
 import json
+import time
 import requests
 
 # from requests_oauthlib import OAuth1
@@ -127,7 +128,9 @@ def search_results(request):
     fake_data = []
     for i in range(1, 10):
         fake_data.append({'name':'Some Title %i' % i,
-                          'info':'Kitty ipsum dolor sit amet, catnip sleep in the sink toss the mousie judging you, sleep on your keyboard judging you hiss hiss sunbathe lick. Fluffy fur zzz lay down in your way sniff claw, catnip knock over the lamp stretching litter box biting.'})
+                          'source':'Kitty ipsum',
+                          'visibility': 'Public',
+                          'updated': time.strftime('%m/%d/%Y')})
     return render(request, 'testapp/search_results.html', {'request': request,
                                                            'data': fake_data,})
 

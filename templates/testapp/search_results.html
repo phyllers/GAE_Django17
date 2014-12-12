@@ -10,15 +10,26 @@
 
     <h2>Search Results Page</h2>
 
-    {% for item in data %}
-    <div class="result-item">
-        <input type="checkbox" class="result-selector" />
-        <div class="result-content">
-            <h4>{{ item.name }}</h4>
-            <p>{{ item.info }}</p>
-        </div>
-    </div>
-    {% endfor %}
+    <table class="table table-striped">
+        <tr>
+            <td><input type="checkbox" id="select-all" /></td>
+            <td>Name</td>
+            <td>Source</td>
+            <td>Visibility</td>
+            <td>Updated</td>
+            <td></td>
+        </tr>
+        {% for item in data %}
+            <tr>
+                <td><input type="checkbox" /></td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.source }}</td>
+                <td>{{ item.visibility }}</td>
+                <td>{{ item.updated }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+    </table>
 
     <a type="button" class="btn btn-primary" href="#">Save As Spreadsheet</a>
 {% endblock %}

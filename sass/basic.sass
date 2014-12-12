@@ -3,7 +3,7 @@
  *******************************************/
 
 body
-    background-color: #E4E3E4
+    background-color: $bg-color
 
 blockquote
     border-left-color: #006DC6
@@ -65,25 +65,70 @@ nav
  *******************************************/
 
 .btn
+    color: $font-color
     border-radius: 1px
 .btn-primary
-    color: $font-color
+    @extend .btn
     background-color: $primary-color
     border-color: $primary-color-dark
     &:hover
-        color: $font-color
+        @extend .btn
         background-color: $primary-color-dark
         border-color: $primary-color-dark
 .btn-success
-    color: $font-color
+    @extend .btn
     background-color: $success-color
     border-color: $success-color-dark
     &:hover
-        color: $font-color
+        @extend .btn
         background-color: $success-color-dark
         border-color: $success-color-dark
 
+.dropdown-menu
+    border-radius: 1px
+    margin: 0px
+.dropdown-toggle:hover
+    background-color: #EEE
 
+.nav-tabs
+    border-bottom: 1px solid #ddd
+    > li.active > a
+        border-radius: 1px 1px 0px 0px
+        border-bottom: none
+    > li:hover > a
+        border-radius: 1px 1px 0px 0px
+        border-bottom: none
+    .navbar-right
+        margin-top: 0px
+        margin-right: -2px
+.tab-content
+    background-color: #FFF
+    padding: 5px 10px
+
+.breadcrumb
+    background-color: $bg-color
+    border-radius: 0px
+    margin-bottom: 10px
+    padding: 5px 15px
+
+.alert
+    border-radius: 1px
+    border: 5px solid transparent
+    padding: 10px
+    .close
+        right: 0px
+    &.alert-success
+        background-color: $bg-color
+        border-color: $success-color-dark
+    &.alert-info
+        background-color: $bg-color
+        border-color: $info-color-dark
+    &.alert-warning
+        background-color: $bg-color
+        border-color: $warning-color-dark
+    &.alert-danger
+        background-color: $bg-color
+        border-color: $danger-color-dark
 /********************************************
  * Handy Classes
  *******************************************/
