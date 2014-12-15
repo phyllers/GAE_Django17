@@ -3,6 +3,7 @@
 
 {% block header %}
 {#<link type="text/css" rel="stylesheet" href="{% static 'css/search.css' %}" />#}
+    <script type="text/javascript" src="{% static 'js/search.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -10,93 +11,118 @@
 
     <h2>Search Metadata Page</h2>
 
-    <input id="search-box" class="form-control" type="text" name="search-field" placeholder="Search" />
+        <div class="search-right-column">
+            Search Criteria:
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h5>
-                <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseOne">
-                    Tumor Types
-                </a>
-            </h5>
+            <ul id="search-criteria">
+
+            </ul>
+
+
+        <a type="submit" class="btn btn-primary" href="/search_results">Search</a>
+    </div>
+
+
+    <div class="search-left-column">
+
+        <input id="search-box" class="form-control" type="text" name="search-field" placeholder="Search" />
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5>
+                    <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseOne">
+                        Tumor Types
+                    </a>
+                </h5>
+            </div>
+
+            <div id="collapseOne" class="panel-collapse collapse in">
+                <div class="panel-body">
+
+                    <ul class="search-checkbox-list">
+                        {% for type in tumor_types %}
+                            <li>
+                                <label for="tumor-{{ type.id }}">
+                                    <input type="checkbox" name="tumor-{{ type.id }}" id="tumor-{{ type.id }}" >
+                                    {{ type.id }} - {{ type.label }}
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5>
+                    <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseTwo">
+                        Metadata Search
+                    </a>
+                </h5>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <h5>Element</h5>
+                    <ul class="search-checkbox-list">
+                        {% for e in elements %}
+                            <li>
+                                <label for="element-{{ e.id }}">
+                                    <input type="checkbox" name="elements-selected" id="element-{{ e.id }}" >
+                                    {{ e.label }}
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
 
-        <div id="collapseOne" class="panel-collapse collapse in">
-            <div class="panel-body">
+                    <h5>Platform</h5>
+                    <ul class="search-checkbox-list">
+                        {% for e in platforms %}
+                            <li>
+                                <label for="platform-{{ e.id }}">
+                                    <input type="checkbox" name="platforms-selected" id="platform-{{ e.id }}" >
+                                    {{ e.label }}
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
 
-                <ul class="search-checkbox-list">
-                    {% for type in tumor_types %}
-                        <li>
-                            <label for="tumor-{{ type.id }}">
-                                <input type="checkbox" name="tumor-{{ type.id }}" id="tumor-{{ type.id }}" >
-                                {{ type.id }} - {{ type.label }}
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
+                    <h5>Participant</h5>
+                    <input type="textbox" name="participant" id="participant">
+
+                    <h5>Batch</h5>
+                    <input type="textbox" name="batch" id="batch">
+
+                    <hr>
+
+
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5>
+                    <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseThree">
+                        Patient Characteristics
+                    </a>
+                </h5>
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <p>Put patient characteristics options here</p>
+                    <h5>Patient Data</h5>
+                    <ul>
+                        <li>Gender (m,f,na)</li>
+                        <li>age at diagnosis (range(10,90))</li>
+                        <li>vital status (alive, dead, na)</li>
+                        <li>year of diagnosis (range(1978, 2013))</li>
+                        <li>days-to-last-followup / days-to-death (range(-833, +11252))</li>
+                        <li>prior diagnosis (y, n, na)</li>
+                        <li>new tumor event after initial treatment (y, n, na)</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h5>
-                <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseTwo">
-                    Metadata Search
-                </a>
-            </h5>
-        </div>
-        <div id="collapseTwo" class="panel-collapse collapse in">
-            <div class="panel-body">
-                <h5>Element</h5>
-                <ul class="search-checkbox-list">
-                    {% for e in elements %}
-                        <li>
-                            <label for="element-{{ e.id }}">
-                                <input type="checkbox" name="element-{{ e.id }}" id="element-{{ e.id }}" >
-                                {{ e.label }}
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
-
-                <h5>Platform</h5>
-                <ul class="search-checkbox-list">
-                    {% for e in platforms %}
-                        <li>
-                            <label for="platform-{{ e.id }}">
-                                <input type="checkbox" name="platform-{{ e.id }}" id="platform-{{ e.id }}" >
-                                {{ e.label }}
-                            </label>
-                        </li>
-                    {% endfor %}
-                </ul>
-
-                <h5>Participant</h5>
-                <input type="textbox" name="participant" id="participant">
-
-                <h5>Batch</h5>
-                <input type="textbox" name="batch" id="batch">
-
-                <hr>
 
 
-            </div>
-        </div>
-    </div>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h5>
-                <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseThree">
-                    Patient Characteristics
-                </a>
-            </h5>
-        </div>
-        <div id="collapseThree" class="panel-collapse collapse in">
-            <div class="panel-body">
-                <p>Put patient characteristics options here</p>
-            </div>
-        </div>
-    </div>
-
-    <a type="submit" class="btn btn-primary" href="/search_results">Search</a>
 {% endblock %}
