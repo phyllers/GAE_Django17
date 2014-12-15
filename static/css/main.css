@@ -2,6 +2,9 @@ html, body, ul, ol {
   margin: 0px;
   padding: 0px; }
 
+ul, ol {
+  list-style: none; }
+
 /********************************************
  * Main General Styles
  ****************************************** */
@@ -164,6 +167,16 @@ nav {
     display: block; }
   .panel-heading a:hover {
     text-decoration: none; }
+
+.search-checkbox-list {
+  border: 1px #999999 solid;
+  height: 100px;
+  overflow-y: scroll;
+  padding: 0px 3px;
+  width: auto; }
+  .search-checkbox-list label {
+    font-weight: normal;
+    margin: 0px; }
 
 .result-item .result-selector {
   float: left;

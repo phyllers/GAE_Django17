@@ -23,11 +23,17 @@
 
         <div id="collapseOne" class="panel-collapse collapse in">
             <div class="panel-body">
-                <select multiple="true">
+
+                <ul class="search-checkbox-list">
                     {% for type in tumor_types %}
-                        <option value="{{ type.id }}">{{ type.id }} - {{ type.label }}</option>
+                        <li>
+                            <label for="tumor-{{ type.id }}">
+                                <input type="checkbox" name="tumor-{{ type.id }}" id="tumor-{{ type.id }}" >
+                                {{ type.id }} - {{ type.label }}
+                            </label>
+                        </li>
                     {% endfor %}
-                </select>
+                </ul>
             </div>
         </div>
     </div>
@@ -35,13 +41,45 @@
         <div class="panel-heading">
             <h5>
                 <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseTwo">
-                    Experiment Types
+                    Metadata Search
                 </a>
             </h5>
         </div>
         <div id="collapseTwo" class="panel-collapse collapse in">
             <div class="panel-body">
-                <p>Find Experiment Types</p>
+                <h5>Element</h5>
+                <ul class="search-checkbox-list">
+                    {% for e in elements %}
+                        <li>
+                            <label for="element-{{ e.id }}">
+                                <input type="checkbox" name="element-{{ e.id }}" id="element-{{ e.id }}" >
+                                {{ e.label }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <h5>Platform</h5>
+                <ul class="search-checkbox-list">
+                    {% for e in platforms %}
+                        <li>
+                            <label for="platform-{{ e.id }}">
+                                <input type="checkbox" name="platform-{{ e.id }}" id="platform-{{ e.id }}" >
+                                {{ e.label }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <h5>Participant</h5>
+                <input type="textbox" name="participant" id="participant">
+
+                <h5>Batch</h5>
+                <input type="textbox" name="batch" id="batch">
+
+                <hr>
+
+
             </div>
         </div>
     </div>

@@ -121,8 +121,35 @@ def search(request):
                    {'id': 'READ', 'label': 'Rectum Adenocarcinoma'},
                    {'id': 'UCEC', 'label': 'Uterine Corpus Endometrial Carcinoma'}]
 
+    elements = [{'id': 1, 'label': 'Participant'},
+                {'id': 2, 'label': 'Sample'},
+                {'id': 3, 'label': 'Portion'},
+                {'id': 4, 'label': 'Analyte'},
+                {'id': 5, 'label': 'Slide'},
+                {'id': 6, 'label': 'Aliquot'},
+                {'id': 7, 'label': '(Radiation)'},
+                {'id': 8, 'label': '(Drug)'},
+                {'id': 9, 'label': '(Examination)'},
+                {'id': 10, 'label': '(Surgery)'},
+                {'id': 11, 'label': 'Shipped Portion'}]
+
+    platforms = [{'id': 1, 'label': 'ABI'},
+                 {'id': 2, 'label': 'AgilentG4502A_07'},
+                 {'id': 3, 'label': 'CGH-1x1M_G4447A'},
+                 {'id': 4, 'label': 'Genome_Wide_SNP_6'},
+                 {'id': 5, 'label': 'H-miRNA_8x15k'},
+                 {'id': 6, 'label': 'HG-CGH-244A'},
+                 {'id': 7, 'label': 'HG-U133_Plus_2'},
+                 {'id': 8, 'label': 'HT_HG_U133A'},
+                 {'id': 9, 'label': 'Human1MDuo'},
+                 {'id': 10, 'label': 'HumanMethylation27'},
+                 {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
+
+
     return render(request, 'testapp/search.html', {'request': request,
-                                                   'tumor_types': tumor_types})
+                                                   'tumor_types': tumor_types,
+                                                   'elements': elements,
+                                                   'platforms': platforms})
 
 def search_results(request):
     fake_data = []
