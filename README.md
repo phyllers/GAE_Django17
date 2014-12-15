@@ -13,5 +13,3 @@ For SASS: run this from root directory
 ```
 sass --watch sass/main.sass:static/css/main.css
 ```
-
-Test line
