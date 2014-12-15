@@ -91,6 +91,10 @@ def create_greeting(request):
             cache.delete(MEMCACHE_GREETINGS)
     return redirect('/testapp/')
 
+def landing_page(request):
+    return render(request, 'testapp/landing.html',
+        {'request': request})
+
 def create_new_user(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
