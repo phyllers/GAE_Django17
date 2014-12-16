@@ -1,31 +1,45 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
 
 {% block content %}
 
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="jumbotron">
-                    <h1>CGC Pilot</h1>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="jumbotron">
+                <h1>ISB-CGC Pilot</h1>
 
-                    <h5 class="pull-right">Shh! It's a secret.</h5>
-                </div>
+                <h5 class="pull-right">Shh! It's a secret.</h5>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-12 col-md-6 col-lg-6">
-                <div class="landing-block">
-                    <h3><u>About us</u></h3>
-                    <p>We're cat people.</p>
-                    <p>Kitty ipsum dolor sit amet, scratched fluffy fur hiss I don't like that food, claw vestibulum sleep on your keyboard sagittis lick hiss vel hairball.</p>
-                </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="landing-block">
+                <h3>About us</h3>
+                <p>The Cancer Genomics Cloud is a platform that serves as a large scale repository and provides the computational infrastructure necessary to carry out cancer genomics research at unprecedented scales. </p>
             </div>
-            <div class="col-sm-12 col-md-6 col-lg-6">
-                <div class="landing-block">
-                    <h3><u>Static Data</u></h3>
-                    <img src="https://placekitten.com/g/500/350">
-                </div>
+            <div class="landing-block">
+                <h3>Useful Links</h3>
+                <ul>
+                    <li><a target="_blank" href="https://github.com/phyllers/GAE_Django17/wiki">Wiki</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Policies and Guidelines</a></li>
+                </ul>
+            </div>
+            <div class="landing-block">
+                <h3>News</h3>
+                <ul>
+                    <li><a href="http://hitconsultant.net/2014/10/16/google-partners-create-cancer-genomics-cloud/">Google Partners to Create Cancer Genomics Cloud Platform</a> - October 16, 2014</li>
+                    <li><a href="http://www.fiercebiotechit.com/story/isb-teams-google-nci-cancer-genomics-cloud-project/2014-10-13">ISB teams with Google for NCI Cancer Genomics Cloud project</a> - October 13, 2014</li>
+                    <li><a href="https://www.genomeweb.com/informatics/nci-contracts-isb-google-sra-team-develop-infrastructure-cancer-genomics-cloud-p">NCI Contracts ISB, Google, SRA Team to Develop Infrastructure for Cancer Genomics Cloud Pilots</a> - October 10, 2014</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="landing-block">
+                <h3>Static Data</h3>
+                <img src="{% static 'img/graph.png' %}">
             </div>
         </div>
     </div>

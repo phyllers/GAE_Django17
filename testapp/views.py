@@ -157,11 +157,15 @@ def search(request):
 
 def search_results(request):
     fake_data = []
+
+    url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
+    req = Request(url)
+    results = json.load(urlopen(req))
     for i in range(1, 10):
         fake_data.append({'name':'Some Title %i' % i,
                           'source':'Kitty ipsum',
                           'visibility': 'Public',
                           'updated': time.strftime('%m/%d/%Y')})
     return render(request, 'testapp/search_results.html', {'request': request,
-                                                           'data': fake_data,})
+                                                           'data': results,})
 
