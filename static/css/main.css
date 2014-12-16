@@ -155,6 +155,14 @@ nav {
 .space-right-10 {
   margin-right: 10px; }
 
+.landing-block h3 {
+  text-decoration: underline; }
+.landing-block ul {
+  list-style: disc;
+  margin-left: 30px; }
+.landing-block img {
+  width: 400px; }
+
 #search-box {
   margin-bottom: 10px; }
 
