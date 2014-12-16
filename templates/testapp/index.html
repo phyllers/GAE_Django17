@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
-
 {% block content %}
-
+    {% if not user.is_authenticated %} <!-- and still signed into google because there's a gtoken? -->
+        <script>
+            if(document.cookie.search('gtoken') > -1){
+                google.identitytoolkit.signOut();
+            }
+        </script>
+    {% endif %}
 
     <h2>Top 10 Most Recent Guestbook Entries</h2>
     {% for greeting in greetings %}

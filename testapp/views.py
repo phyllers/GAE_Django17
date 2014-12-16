@@ -11,6 +11,7 @@ from django.shortcuts import redirect
 from urllib2 import Request, urlopen, URLError
 from django.db import IntegrityError
 from identitytoolkit import gitkitclient
+from django.db.models import Max
 import django
 import json
 import time
@@ -61,8 +62,11 @@ def list_greetings(request):
         'api_greetings': api_greetings,
         'userinfo': ''
     }
+    for u in User.objects.all():
+        print 'id: ' + str(u.id) + ' ' + u.username
 
     if 'gtoken' in request.COOKIES:
+        print 'gtoken in request.COOKIES'
         gitkit_user = gitkit_instance.VerifyGitkitToken(request.COOKIES['gtoken'])
         if gitkit_user:
             gitkit_user_by_email = gitkit_instance.GetUserByEmail(gitkit_user.email)
@@ -72,30 +76,45 @@ def list_greetings(request):
                 last_name = None
                 if gitkit_user_by_email.name:
                     print 'gitkit_user_by_email.name: ' + gitkit_user_by_email.name
+                    print User.objects.all().aggregate(Max('id'))
                     first_name = gitkit_user_by_email.name.split(' ')[0]
                     last_name = gitkit_user_by_email.name.split(' ')[1]
-                    # print 'first name is ' + first_name
-                    # print 'last name is ' + last_name
-                if gitkit_user_by_email.photo_url:
-                    # print "gitkit_user_by_email.photo_url: " + gitkit_user_by_email.photo_url
-                    pass
-
                 try:
-                    user = User.objects.create_user(
+                    User.objects.create_user(
+                        id=User.objects.all().aggregate(Max('id'))['id__max']+1,
                         username=gitkit_user.email,
                         email=gitkit_user.email,
                         password=gitkit_user.user_id,
                         first_name=first_name,
                         last_name=last_name
                         )
-                    login(request, user)
+                    user = authenticate(username=gitkit_user.email, password=gitkit_user.user_id)
                 except IntegrityError, e:
                     print 'error is ' + str(e)
-            else:
-                login(request, user)
+            login(request, user)
             context_dict['userinfo'] = str(vars(gitkit_user))
+        else:
+            print 'gitkit user is none'
+            logout(request)
+    else:
+        logout(request)
 
     return render(request, 'testapp/index.html', context_dict)
+
+
+def widget(request):
+    return render(request, 'testapp/widget.html', {})
+
+
+def user_logout(request):
+    # doesn't work -- in javascript google.identitytoolkit.signOut();
+    # if 'gtoken' in request.COOKIES:
+    #     print 'here'
+    #     response = render(request, 'testapp/index.html')
+    #     response.set_cookie('gtoken', None)
+    print 'gtoken is ' + str(request.COOKIES['gtoken'])
+    logout(request)
+    return render(request, 'testapp/index.html')
 
 
 def create_greeting(request):
@@ -180,14 +199,4 @@ def search_results(request):
     return render(request, 'testapp/search_results.html', {'request': request,
                                                            'data': fake_data,})
 
-
-def widget(request):
-    return render(request, 'testapp/widget.html', {})
-
-
-def logout(request):
-    # if 'gtoken' in request.COOKIES:
-    #     request.COOKIES['gtoken'] = None
-    logout(request)
-    return render(request, 'testapp/index.html')
 
