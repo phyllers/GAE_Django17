@@ -13,13 +13,16 @@
 
         <div class="search-right-column">
             Search Criteria:
+            <div id="tumors-search-criteria">
+{#                <h5>Tumors selected:</h5>#}
+{#                <ul></ul>#}
+            </div>
+{#            <h5>Elements selected:</h5>#}
+            <div id="elements-search-criteria"></div>
+{#            <h5>Platforms selected:</h5>#}
+            <div id="platforms-search-criteria"></div>
 
-            <ul id="search-criteria">
-
-            </ul>
-
-
-        <a type="submit" class="btn btn-primary" href="/search_results">Search</a>
+        <a type="submit" class="btn btn-primary space-top-10" href="/search_results">Search</a>
     </div>
 
 
@@ -43,7 +46,7 @@
                         {% for type in tumor_types %}
                             <li>
                                 <label for="tumor-{{ type.id }}">
-                                    <input type="checkbox" name="tumor-{{ type.id }}" id="tumor-{{ type.id }}" >
+                                    <input type="checkbox" name="tumors-selected" id="tumor-{{ type.id }}" >
                                     {{ type.id }} - {{ type.label }}
                                 </label>
                             </li>
@@ -93,8 +96,6 @@
                     <input type="textbox" name="batch" id="batch">
 
                     <hr>
-
-
                 </div>
             </div>
         </div>
