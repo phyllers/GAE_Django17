@@ -25,8 +25,8 @@ urlpatterns = patterns('',
         {'authentication_form': AuthenticationForm,
         'template_name': 'testapp/login.html',}),
     url(r'^accounts/profile/$', 'testapp.views.list_greetings'),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout',
-        {'next_page': '/testapp/',}),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/testapp/',}),
+    url(r'^widget', views.widget, name='widget'),
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),

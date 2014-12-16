@@ -9,6 +9,17 @@
     <link type="text/css" rel="stylesheet" href="{% static 'css/main.css' %}" />
     <script type="text/javascript" src="{% static 'js/jquery-1.11.1.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
+    <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+    <script type=text/javascript>
+      window.google.identitytoolkit.signInButton(
+        '#signin', // accepts any CSS selector
+        {
+          widgetUrl: "http://localhost:8000/widget",
+          signOutUrl: "/",
+        }
+      );
+    </script>
     {% block header %}{% endblock %}
 </head>
 <body>
@@ -25,15 +36,18 @@
         </div>
         <div class="nav navbar-right">
             <div id="user-login" class="navbar-form inline-block">
-                <a href="/accounts/create_user/">Create User</a>
-                Hello
+                <!-- commented out only because just logging in with a google account creates a new user-->
+                <!--<a href="/accounts/create_user/">Create User</a>-->
+                Hello,
                 {% if user.is_authenticated %}
-                    {{ user.username }}
+                    {{ user.first_name }} {{ user.last_name }}
                     [<a href="/accounts/logout/">sign out</a>]
                 {% else %}
                     World!
-                    [<a href="/accounts/login/">sign in</a>]
+                    <!--[<a href="/accounts/login/">sign in</a>]-->
+                    [<a href="/widget?mode=select">Sign In</a>]
                 {% endif %}
+                <div id="signin"></div>
             </div>
         </div>
     </div>

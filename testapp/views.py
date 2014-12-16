@@ -1,12 +1,16 @@
 # Create your views here.
 from django.core.cache import cache
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from testapp.forms import CreateGreetingForm
 from testapp.models import Greeting
 from django.shortcuts import render
 from django.shortcuts import redirect
 from urllib2 import Request, urlopen, URLError
+from django.db import IntegrityError
+from identitytoolkit import gitkitclient
 import django
 import json
 import time
@@ -30,39 +34,15 @@ import requests
 # API_ROOT = 'https://striking-berm-771.appspot.com/_ah/api'
 # API = 'gae_endpoints'
 # VERSION = 'v1'
-
+gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config.json')
 
 MEMCACHE_GREETINGS = 'greetings'
 
+
 def list_greetings(request):
 
-    # storage = oauth2client.file.Storage('guestbook.dat')
-    # credentials = storage.get()
-    # parser = argparse.ArgumentParser(
-    #     description='Auth sample',
-    #     formatter_class=argparse.RawDescriptionHelpFormatter,
-    #     parents=[tools.argparser])
-    # flags = parser.parse_args('')
-    #
-    # if credentials is None or credentials.invalid:
-    #     flow = oauth2client.client.OAuth2WebServerFlow(
-    #         client_id=CLIENT_ID,
-    #         client_secret=CLIENT_SECRET,
-    #         scope=SCOPE,
-    #         user_agent=USER_AGENT,
-    #         xoauth_displayname=OAUTH_DISPLAY_NAME
-    #     )
-    #     credentials = tools.run_flow(flow, storage, flags)
-    # http = httplib2.Http()
-    # http = credentials.authorize(http)
-    # discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (API_ROOT, API, VERSION)
     try:
-        # service = discovery.build(API, VERSION, discoveryServiceUrl=discovery_url, http=http)
-        # response = service.greetings()
-        # api_greetings = service
-
         url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/'
-        # auth = OAuth1(CLIENT_ID, CLIENT_SECRET)
         req3 = Request(url)
         api_greetings = json.load(urlopen(req3))
     except URLError, e:
@@ -72,13 +52,51 @@ def list_greetings(request):
     if greetings is None:
         greetings = Greeting.objects.all().order_by('-date')[:10]
         cache.add(MEMCACHE_GREETINGS, greetings)
-    return render(request, 'testapp/index.html',
-                              {'request': request,
-                               'greetings': greetings,
-                               'form': CreateGreetingForm(),
-                               'djversion': django.get_version(),
-                               'api_greetings': api_greetings,
-                               })
+
+    context_dict = {
+        'request': request,
+        'greetings': greetings,
+        'form': CreateGreetingForm(),
+        'djversion': django.get_version(),
+        'api_greetings': api_greetings,
+        'userinfo': ''
+    }
+
+    if 'gtoken' in request.COOKIES:
+        gitkit_user = gitkit_instance.VerifyGitkitToken(request.COOKIES['gtoken'])
+        if gitkit_user:
+            gitkit_user_by_email = gitkit_instance.GetUserByEmail(gitkit_user.email)
+            user = authenticate(username=gitkit_user.email, password=gitkit_user.user_id)
+            if user is None:
+                first_name = None
+                last_name = None
+                if gitkit_user_by_email.name:
+                    print 'gitkit_user_by_email.name: ' + gitkit_user_by_email.name
+                    first_name = gitkit_user_by_email.name.split(' ')[0]
+                    last_name = gitkit_user_by_email.name.split(' ')[1]
+                    # print 'first name is ' + first_name
+                    # print 'last name is ' + last_name
+                if gitkit_user_by_email.photo_url:
+                    # print "gitkit_user_by_email.photo_url: " + gitkit_user_by_email.photo_url
+                    pass
+
+                try:
+                    user = User.objects.create_user(
+                        username=gitkit_user.email,
+                        email=gitkit_user.email,
+                        password=gitkit_user.user_id,
+                        first_name=first_name,
+                        last_name=last_name
+                        )
+                    login(request, user)
+                except IntegrityError, e:
+                    print 'error is ' + str(e)
+            else:
+                login(request, user)
+            context_dict['userinfo'] = str(vars(gitkit_user))
+
+    return render(request, 'testapp/index.html', context_dict)
+
 
 def create_greeting(request):
     if request.method == 'POST':
@@ -90,6 +108,7 @@ def create_greeting(request):
             greeting.save()
             cache.delete(MEMCACHE_GREETINGS)
     return redirect('/testapp/')
+
 
 def create_new_user(request):
     if request.method == 'POST':
@@ -160,4 +179,15 @@ def search_results(request):
                           'updated': time.strftime('%m/%d/%Y')})
     return render(request, 'testapp/search_results.html', {'request': request,
                                                            'data': fake_data,})
+
+
+def widget(request):
+    return render(request, 'testapp/widget.html', {})
+
+
+def logout(request):
+    # if 'gtoken' in request.COOKIES:
+    #     request.COOKIES['gtoken'] = None
+    logout(request)
+    return render(request, 'testapp/index.html')
 
