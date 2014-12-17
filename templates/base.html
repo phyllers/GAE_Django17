@@ -12,15 +12,15 @@
     <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
     <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
     <!--uncomment this and -->
-    <script type=text/javascript>
-      window.google.identitytoolkit.signInButton(
-        '#signin', // accepts any CSS selector
-        {
-          widgetUrl: "http://localhost:8080/widget",
-          signOutUrl: "/",
-        }
-      );
-    </script>
+    <!--<script type=text/javascript>-->
+      <!--window.google.identitytoolkit.signInButton(-->
+        <!--'#signin', // accepts any CSS selector-->
+        <!--{-->
+          <!--widgetUrl: "http://localhost:8080/widget",-->
+          <!--signOutUrl: "/",-->
+        <!--}-->
+      <!--);-->
+    <!--</script>-->
     <!-- if the user is signed out of django... -->
     {% if not user.is_authenticated %}
         <script>
@@ -45,7 +45,7 @@
             <ul class="nav navbar-nav">
                 <li {% if request.path == '/' %}class="active"{% endif %}><a href="/">Home</a></li>
                 <li {% if request.path == '/search/' or request.path == '/search_results/' %}class="active"{% endif %}><a href="/search/">Search</a></li>
-                <li {% if request.path == '/css_test/' %}class="active"{% endif %}><a href="/css_test/">CSS</a></li>
+                <!--<li {% if request.path == '/css_test/' %}class="active"{% endif %}><a href="/css_test/">CSS</a></li>-->
             </ul>
         </div>
         <div class="nav navbar-right">

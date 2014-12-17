@@ -12,13 +12,23 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine') or os.getenv('SETTINGS_MODE') == 'prod':
+if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):  # or os.getenv('SETTINGS_MODE') == 'prod':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/striking-berm-771:django-test',
-            'NAME': 'pong',
+            'HOST': '/cloudsql/isb-cgc:demo01',
+            'NAME': 'demo',
+            'USER': 'root'
+        }
+    }
+elif os.getenv('SETTINGS_MODE') == 'prod':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': '173.194.225.46',
+            'NAME': 'demo',
             'USER': 'root',
+            'PASSWORD': 'password'
         }
     }
 else:
