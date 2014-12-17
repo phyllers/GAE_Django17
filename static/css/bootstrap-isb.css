@@ -628,12 +628,17 @@ a.list-group-item:focus {
 	margin-top: 13px;
 }
 .navbar-inverse .navbar-brand {
-	color: #fff;
-	background-image: url(../img/logo.png);
-	background-repeat: no-repeat;
-	width: 184px;
-	margin-right: 60px;
+	//background-image: url(../img/logo.png);
+	//width: 184px;
+	//margin-right: 60px;
+
+	background-image: url(../img/new-logo.png);
+	width: 240px;
+	margin-right: 10px;
+
 	height:60px;
+	background-repeat: no-repeat;
+	color: #fff;
 }
 .navbar-inverse .navbar-brand:hover,
 .navbar-inverse .navbar-brand:focus {

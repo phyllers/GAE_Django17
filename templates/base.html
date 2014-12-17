@@ -41,12 +41,13 @@
 <nav class="navbar" role="navigation">
     <div class="container-fluid">
         <div class="nav navbar-left inline-block">
-            <a href="/"><img class="navbar-brand" src="{% static 'img/isblogo.png' %}" /></a>
+            <a href="/genespot-re/"><img class="navbar-brand" src="{% static 'img/isblogo.png' %}" /></a>
             <ul class="nav navbar-nav">
                 <li {% if request.path == '/' %}class="active"{% endif %}><a href="/">Home</a></li>
                 {% if user.is_authenticated %}
                 <li {% if request.path == '/search/' or request.path == '/search_results/' %}class="active"{% endif %}><a href="/search/">Search</a></li>
                 {% endif %}
+                <li {% if request.path == '/genespot-re/' %}class="active"{% endif %}><a href="/genespot-re/">Genespot-RE Styles</a></li>
                 <!--<li {% if request.path == '/css_test/' %}class="active"{% endif %}><a href="/css_test/">CSS</a></li>-->
             </ul>
         </div>

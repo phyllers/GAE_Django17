@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^accounts/profile/$', 'testapp.views.list_greetings'),
     url(r'^accounts/logout/$', 'testapp.views.user_logout'),
     url(r'^widget', 'testapp.views.widget', name='widget'),
-
+    url(r'^genespot-re', views.genespotre),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', views.search),
     url(r'^search_results/', views.search_results),

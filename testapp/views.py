@@ -23,8 +23,11 @@ gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config
 MEMCACHE_GREETINGS = 'greetings'
 
 
+def genespotre(request):
+    return render(request, 'testapp/genespot-re-demo.html', {})
+
+
 def list_greetings(request):
-    print '\nin list_greetings'
     try:
         url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/'
         req3 = Request(url)
