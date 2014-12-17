@@ -16,8 +16,8 @@ if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):  # or os.ge
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/isb-cgc:demo01',
-            'NAME': 'demo',
+            'HOST': '/cloudsql/striking-berm-771:django-test',
+            'NAME': 'pong',
             'USER': 'root'
         }
     }
@@ -25,8 +25,8 @@ elif os.getenv('SETTINGS_MODE') == 'prod':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '173.194.225.46',
-            'NAME': 'demo',
+            'HOST': '173.194.248.51',
+            'NAME': 'pong',
             'USER': 'root',
             'PASSWORD': 'password'
         }
