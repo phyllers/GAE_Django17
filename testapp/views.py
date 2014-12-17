@@ -11,6 +11,7 @@ from urllib2 import Request, urlopen, URLError
 from django.db import IntegrityError
 from identitytoolkit import gitkitclient
 from django.db.models import Max
+from django.contrib.auth.decorators import login_required
 import django
 import json
 import time
@@ -136,6 +137,7 @@ def create_new_user(request):
 def css_test(request):
     return render(request, 'testapp/css_test.html', {'request': request})
 
+@login_required
 def search(request):
     tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
                    {'id': 'BRCA', 'label': 'Breast Invasive Carcinoma'},
