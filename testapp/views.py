@@ -71,6 +71,7 @@ def list_greetings(request):
         if gitkit_user:
             user = authenticate(username=gitkit_user.email, password=gitkit_user.user_id)
             if user is None:
+                print 'user is none'
                 # If this is the first time the google+ user logs in to the client application,
                 # the google+ user information is used to make a new User entry in the django database.
                 # In the future, here is where we could keep out unauthorized users
@@ -100,6 +101,11 @@ def list_greetings(request):
                     # set to 2147483647
                     print 'error is ' + str(e)
                     return render(request, 'testapp/index.html', context_dict)
+            else:
+                if user.is_authenticated():
+                    print 'user authenticated from the start'
+                else:
+                    print 'not authenticated'
             login(request, user)
             if user.is_authenticated:
                 print '\nuser is authenticated'

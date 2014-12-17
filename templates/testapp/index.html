@@ -3,6 +3,7 @@
     <!-- if the user is signed out of django... -->
     {% if not user.is_authenticated %}
         <script>
+            console.log("user is not authenticated");
             // ...but the user is still signed into google+...
             if(document.cookie.search('gtoken') > -1){
                 // ...sign the user out of google+
