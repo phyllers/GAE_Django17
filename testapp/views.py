@@ -43,7 +43,7 @@ MEMCACHE_GREETINGS = 'greetings'
 
 
 def list_greetings(request):
-
+    print '\nin list_greetings'
     try:
         url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/'
         req3 = Request(url)
@@ -101,8 +101,13 @@ def list_greetings(request):
                     print 'error is ' + str(e)
                     return render(request, 'testapp/index.html', context_dict)
             login(request, user)
+            if user.is_authenticated:
+                print '\nuser is authenticated'
+            else:
+                print '\nnot authenticated'
         else:
             # this shouldn't ever happen
+            print 'this shouldnt ever happen'
             logout(request)
     else:
         logout(request)

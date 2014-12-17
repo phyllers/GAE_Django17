@@ -12,15 +12,15 @@
     <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
     <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
     <!--uncomment this and -->
-    <!--<script type=text/javascript>-->
-      <!--window.google.identitytoolkit.signInButton(-->
-        <!--'#signin', // accepts any CSS selector-->
-        <!--{-->
-          <!--widgetUrl: "http://localhost:8000/widget",-->
-          <!--signOutUrl: "/",-->
-        <!--}-->
-      <!--);-->
-    <!--</script>-->
+    <script type=text/javascript>
+      window.google.identitytoolkit.signInButton(
+        '#signin', // accepts any CSS selector
+        {
+          widgetUrl: "http://localhost:8080/widget",
+          signOutUrl: "/",
+        }
+      );
+    </script>
     {% block header %}{% endblock %}
 </head>
 <body>
@@ -48,7 +48,7 @@
                     World!
                     [<a href="/widget?mode=select">Sign In</a>]
                 {% endif %}
-                <!--<div id="signin"></div>-->
+                <div id="signin"></div>
             </div>
         </div>
     </div>
