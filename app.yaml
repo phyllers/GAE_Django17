@@ -9,6 +9,11 @@ libraries:
   version: "latest"
 - name: ssl
   version: "latest"
+- name: pycrypto
+  version: "2.6"
+
+builtins:
+- django_wsgi: on
 
 handlers:
 - url: /static
