@@ -155,8 +155,39 @@ nav {
 .space-right-10 {
   margin-right: 10px; }
 
+.landing-block h3 {
+  text-decoration: underline; }
+.landing-block ul {
+  list-style: disc;
+  margin-left: 30px; }
+.landing-block img {
+  width: 400px; }
+
 #search-box {
   margin-bottom: 10px; }
+
+.search-left-column {
+  display: block;
+  margin-right: 300px; }
+
+.search-right-column {
+  background-color: #FFF;
+  border: 1px #bbbbbb solid;
+  border-radius: 1px;
+  padding: 10px;
+  position: absolute;
+  right: 10px;
+  width: 290px; }
+  .search-right-column h5 {
+    margin-bottom: 3px; }
+    .search-right-column h5:first-letter {
+      text-transform: uppercase; }
+  .search-right-column ul {
+    list-style: disc;
+    margin-left: 25px; }
+
+.panel {
+  border-radius: 1px; }
 
 .panel-heading {
   padding: 0px; }

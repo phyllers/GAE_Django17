@@ -1,5 +1,5 @@
-application: striking-berm-771
-version: django17
+application: isb-cgc
+version: 1
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -9,6 +9,11 @@ libraries:
   version: "latest"
 - name: ssl
   version: "latest"
+- name: pycrypto
+  version: "2.6"
+
+builtins:
+- django_wsgi: on
 
 handlers:
 - url: /static

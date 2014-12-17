@@ -3,6 +3,7 @@
 
 {% block header %}
 {#<link type="text/css" rel="stylesheet" href="{% static 'css/search.css' %}" />#}
+    <script type="text/javascript" src="{% static 'js/search.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -13,23 +14,27 @@
     <table class="table table-striped">
         <tr>
             <td><input type="checkbox" id="select-all" /></td>
-            <td>Name</td>
-            <td>Source</td>
-            <td>Visibility</td>
+            <td>UUID</td>
+{#            <td>Barcode</td>#}
+            <td>Created</td>
             <td>Updated</td>
             <td></td>
         </tr>
-        {% for item in data %}
+        {% for item in data.uuidBrowserData %}
             <tr>
                 <td><input type="checkbox" /></td>
-                <td>{{ item.name }}</td>
-                <td>{{ item.source }}</td>
-                <td>{{ item.visibility }}</td>
-                <td>{{ item.updated }}</td>
+                <td>{{ item.uuid }}</td>
+{#                metaDataString is literally a string of an object that needs to be parsed #}
+{#                <td>{{ item.metaDataString }}</td>#}
+                <td>{{ item.createDate }}</td>
+                <td>{{ item.updateDate }}</td>
                 <td></td>
             </tr>
         {% endfor %}
     </table>
 
     <a type="button" class="btn btn-primary" href="#">Save As Spreadsheet</a>
+    <br>
+
+
 {% endblock %}
