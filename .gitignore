@@ -3,10 +3,11 @@
 .idea/*
 .DS_Store
 *.p12
-*.pem
 .sass-cache
+env/
 env/*
 settings.py
 gitkit-server-config.json
 app.yaml
 
+*.pem
