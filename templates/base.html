@@ -11,6 +11,7 @@
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="//www.gstatic.com/authtoolkit/js/gitkit.js"></script>
     <link type=text/css rel=stylesheet href="//www.gstatic.com/authtoolkit/css/gitkit.css" />
+    <!--uncomment this and -->
     <!--<script type=text/javascript>-->
       <!--window.google.identitytoolkit.signInButton(-->
         <!--'#signin', // accepts any CSS selector-->
@@ -45,7 +46,6 @@
                     [<a href="/accounts/logout/">sign out</a>]
                 {% else %}
                     World!
-                    <!--[<a href="/accounts/login/">sign in</a>]-->
                     [<a href="/widget?mode=select">Sign In</a>]
                 {% endif %}
                 <!--<div id="signin"></div>-->

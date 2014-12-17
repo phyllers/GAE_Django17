@@ -35,6 +35,7 @@ import requests
 # API_ROOT = 'https://striking-berm-771.appspot.com/_ah/api'
 # API = 'gae_endpoints'
 # VERSION = 'v1'
+
 gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config.json')
 
 MEMCACHE_GREETINGS = 'greetings'
@@ -60,45 +61,50 @@ def list_greetings(request):
         'form': CreateGreetingForm(),
         'djversion': django.get_version(),
         'api_greetings': api_greetings,
-        'userinfo': ''
     }
-    for u in User.objects.all():
-        print 'id: ' + str(u.id) + ' ' + u.username
-
+    # among other things, the gtoken cookie contains
+    # 1) the user's email, which is set here to the username for the django.auth User model
+    # 2) a user_id that is specific to each google+ user for each client. Here it becomes the password for the user
     if 'gtoken' in request.COOKIES:
-        print 'gtoken in request.COOKIES'
         gitkit_user = gitkit_instance.VerifyGitkitToken(request.COOKIES['gtoken'])
         if gitkit_user:
-            gitkit_user_by_email = gitkit_instance.GetUserByEmail(gitkit_user.email)
             user = authenticate(username=gitkit_user.email, password=gitkit_user.user_id)
             if user is None:
+                # If this is the first time the google+ user logs in to the client application,
+                # the google+ user information is used to make a new User entry in the django database.
+                # In the future, here is where we could keep out unauthorized users
                 first_name = None
                 last_name = None
-                if gitkit_user_by_email.name:
-                    print 'gitkit_user_by_email.name: ' + gitkit_user_by_email.name
-                    print User.objects.all().aggregate(Max('id'))
+                gitkit_user_by_email = gitkit_instance.GetUserByEmail(gitkit_user.email)
+                if gitkit_user_by_email:
                     first_name = gitkit_user_by_email.name.split(' ')[0]
                     last_name = gitkit_user_by_email.name.split(' ')[1]
                 try:
                     User.objects.create_user(
+                        # the primary key id is created manually here because django seems to try to use
+                        # gitkit_user.user_id as the id field, which exceeds the maximum number of bytes
+                        # allowed for mysql type int. The id's were then automatically set to the maximum
+                        # number, 2147483647. An alternative solution would be to subclass User and make
+                        # the id field type varchar instead of int
                         id=User.objects.all().aggregate(Max('id'))['id__max']+1,
                         username=gitkit_user.email,
                         email=gitkit_user.email,
                         password=gitkit_user.user_id,
                         first_name=first_name,
                         last_name=last_name
-                        )
+                    )
                     user = authenticate(username=gitkit_user.email, password=gitkit_user.user_id)
                 except IntegrityError, e:
+                    # used to get integrity errors when user id's were automatically
+                    # set to 2147483647
                     print 'error is ' + str(e)
+                    return render(request, 'testapp/index.html', context_dict)
             login(request, user)
-            context_dict['userinfo'] = str(vars(gitkit_user))
         else:
-            print 'gitkit user is none'
+            # this shouldn't ever happen
             logout(request)
     else:
         logout(request)
-
     return render(request, 'testapp/index.html', context_dict)
 
 
@@ -107,12 +113,8 @@ def widget(request):
 
 
 def user_logout(request):
-    # doesn't work -- in javascript google.identitytoolkit.signOut();
-    # if 'gtoken' in request.COOKIES:
-    #     print 'here'
-    #     response = render(request, 'testapp/index.html')
-    #     response.set_cookie('gtoken', None)
-    print 'gtoken is ' + str(request.COOKIES['gtoken'])
+    # this just logs out of django, not google+
+    # the javascript on the index.html page logs out of google+ when it sees the django user is logged out
     logout(request)
     return render(request, 'testapp/index.html')
 
@@ -143,8 +145,10 @@ def create_new_user(request):
     return render(request, 'testapp/user_create_form.html',
         {'form': form})
 
+
 def css_test(request):
     return render(request, 'testapp/css_test.html', {'request': request})
+
 
 def search(request):
     tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
@@ -183,11 +187,11 @@ def search(request):
                  {'id': 10, 'label': 'HumanMethylation27'},
                  {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
 
-
     return render(request, 'testapp/search.html', {'request': request,
                                                    'tumor_types': tumor_types,
                                                    'elements': elements,
                                                    'platforms': platforms})
+
 
 def search_results(request):
     fake_data = []
