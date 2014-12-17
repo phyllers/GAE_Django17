@@ -1,17 +1,12 @@
 # Create your views here.
 from django.core.cache import cache
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from testapp.forms import CreateGreetingForm
 from testapp.models import Greeting
 from django.shortcuts import render
 from django.shortcuts import redirect
 from urllib2 import Request, urlopen, URLError
-from django.db import IntegrityError
-from identitytoolkit import gitkitclient
-from django.db.models import Max
 import django
 import json
 import time
@@ -36,15 +31,38 @@ import requests
 # API = 'gae_endpoints'
 # VERSION = 'v1'
 
-gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config.json')
 
 MEMCACHE_GREETINGS = 'greetings'
 
-
 def list_greetings(request):
 
+    # storage = oauth2client.file.Storage('guestbook.dat')
+    # credentials = storage.get()
+    # parser = argparse.ArgumentParser(
+    #     description='Auth sample',
+    #     formatter_class=argparse.RawDescriptionHelpFormatter,
+    #     parents=[tools.argparser])
+    # flags = parser.parse_args('')
+    #
+    # if credentials is None or credentials.invalid:
+    #     flow = oauth2client.client.OAuth2WebServerFlow(
+    #         client_id=CLIENT_ID,
+    #         client_secret=CLIENT_SECRET,
+    #         scope=SCOPE,
+    #         user_agent=USER_AGENT,
+    #         xoauth_displayname=OAUTH_DISPLAY_NAME
+    #     )
+    #     credentials = tools.run_flow(flow, storage, flags)
+    # http = httplib2.Http()
+    # http = credentials.authorize(http)
+    # discovery_url = '%s/discovery/v1/apis/%s/%s/rest' % (API_ROOT, API, VERSION)
     try:
+        # service = discovery.build(API, VERSION, discoveryServiceUrl=discovery_url, http=http)
+        # response = service.greetings()
+        # api_greetings = service
+
         url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/'
+        # auth = OAuth1(CLIENT_ID, CLIENT_SECRET)
         req3 = Request(url)
         api_greetings = json.load(urlopen(req3))
     except URLError, e:
@@ -54,70 +72,13 @@ def list_greetings(request):
     if greetings is None:
         greetings = Greeting.objects.all().order_by('-date')[:10]
         cache.add(MEMCACHE_GREETINGS, greetings)
-
-    context_dict = {
-        'request': request,
-        'greetings': greetings,
-        'form': CreateGreetingForm(),
-        'djversion': django.get_version(),
-        'api_greetings': api_greetings,
-    }
-    # among other things, the gtoken cookie contains
-    # 1) the user's email, which is set here to the username for the django.auth User model
-    # 2) a user_id that is specific to each google+ user for each client. Here it becomes the password for the user
-    if 'gtoken' in request.COOKIES:
-        gitkit_user = gitkit_instance.VerifyGitkitToken(request.COOKIES['gtoken'])
-        if gitkit_user:
-            user = authenticate(username=gitkit_user.email, password=gitkit_user.user_id)
-            if user is None:
-                # If this is the first time the google+ user logs in to the client application,
-                # the google+ user information is used to make a new User entry in the django database.
-                # In the future, here is where we could keep out unauthorized users
-                first_name = None
-                last_name = None
-                gitkit_user_by_email = gitkit_instance.GetUserByEmail(gitkit_user.email)
-                if gitkit_user_by_email:
-                    first_name = gitkit_user_by_email.name.split(' ')[0]
-                    last_name = gitkit_user_by_email.name.split(' ')[1]
-                try:
-                    User.objects.create_user(
-                        # the primary key id is created manually here because django seems to try to use
-                        # gitkit_user.user_id as the id field, which exceeds the maximum number of bytes
-                        # allowed for mysql type int. The id's were then automatically set to the maximum
-                        # number, 2147483647. An alternative solution would be to subclass User and make
-                        # the id field type varchar instead of int
-                        id=User.objects.all().aggregate(Max('id'))['id__max']+1,
-                        username=gitkit_user.email,
-                        email=gitkit_user.email,
-                        password=gitkit_user.user_id,
-                        first_name=first_name,
-                        last_name=last_name
-                    )
-                    user = authenticate(username=gitkit_user.email, password=gitkit_user.user_id)
-                except IntegrityError, e:
-                    # used to get integrity errors when user id's were automatically
-                    # set to 2147483647
-                    print 'error is ' + str(e)
-                    return render(request, 'testapp/index.html', context_dict)
-            login(request, user)
-        else:
-            # this shouldn't ever happen
-            logout(request)
-    else:
-        logout(request)
-    return render(request, 'testapp/index.html', context_dict)
-
-
-def widget(request):
-    return render(request, 'testapp/widget.html', {})
-
-
-def user_logout(request):
-    # this just logs out of django, not google+
-    # the javascript on the index.html page logs out of google+ when it sees the django user is logged out
-    logout(request)
-    return render(request, 'testapp/index.html')
-
+    return render(request, 'testapp/index.html',
+                              {'request': request,
+                               'greetings': greetings,
+                               'form': CreateGreetingForm(),
+                               'djversion': django.get_version(),
+                               'api_greetings': api_greetings,
+                               })
 
 def create_greeting(request):
     if request.method == 'POST':
@@ -130,6 +91,9 @@ def create_greeting(request):
             cache.delete(MEMCACHE_GREETINGS)
     return redirect('/testapp/')
 
+def landing_page(request):
+    return render(request, 'testapp/landing.html',
+        {'request': request})
 
 def create_new_user(request):
     if request.method == 'POST':
@@ -145,10 +109,8 @@ def create_new_user(request):
     return render(request, 'testapp/user_create_form.html',
         {'form': form})
 
-
 def css_test(request):
     return render(request, 'testapp/css_test.html', {'request': request})
-
 
 def search(request):
     tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
@@ -187,20 +149,23 @@ def search(request):
                  {'id': 10, 'label': 'HumanMethylation27'},
                  {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
 
+
     return render(request, 'testapp/search.html', {'request': request,
                                                    'tumor_types': tumor_types,
                                                    'elements': elements,
                                                    'platforms': platforms})
 
-
 def search_results(request):
     fake_data = []
+
+    url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
+    req = Request(url)
+    results = json.load(urlopen(req))
     for i in range(1, 10):
         fake_data.append({'name':'Some Title %i' % i,
                           'source':'Kitty ipsum',
                           'visibility': 'Public',
                           'updated': time.strftime('%m/%d/%Y')})
     return render(request, 'testapp/search_results.html', {'request': request,
-                                                           'data': fake_data,})
-
+                                                           'data': results,})
 
