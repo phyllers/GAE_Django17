@@ -21,6 +21,19 @@
         }
       );
     </script>
+    <!-- if the user is signed out of django... -->
+    {% if not user.is_authenticated %}
+        <script>
+            // console.log("user is not authenticated");
+            // ...but the user is still signed into google+...
+            if(document.cookie.search('gtoken') > -1){
+                // ...sign the user out of google+
+                google.identitytoolkit.signOut();
+                // In the future, here is where we could put messages describing why
+                // the google+ user isn't allowed to sign in
+            }
+        </script>
+    {% endif %}
     {% block header %}{% endblock %}
 </head>
 <body>

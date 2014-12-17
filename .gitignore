@@ -5,3 +5,5 @@
 *.p12
 .sass-cache
 env/
+env/*
+*.pem

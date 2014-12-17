@@ -1,4 +1,3 @@
-# Create your views here.
 from django.core.cache import cache
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -16,25 +15,6 @@ import django
 import json
 import time
 import requests
-
-# from requests_oauthlib import OAuth1
-
-# !!! Commented out API authorization code until I can get it to work with Endpoints !!!
-# from apiclient import discovery
-# import httplib2
-# import oauth2client
-# from oauth2client import tools
-# import argparse
-
-# CLIENT_ID = '1042486265945-969e0e0blptg1l9suhj7ppn5qjal8idb.apps.googleusercontent.com'
-# CLIENT_SECRET = 'gGcU6r-00xB23my8MUzvzn5C'
-# SCOPE = 'https://www.googleapis.com/auth/userinfo.email'
-# USER_AGENT = 'my-app'
-# OAUTH_DISPLAY_NAME = 'HAPPY APPY'
-#
-# API_ROOT = 'https://striking-berm-771.appspot.com/_ah/api'
-# API = 'gae_endpoints'
-# VERSION = 'v1'
 
 
 gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config.json')
@@ -63,7 +43,35 @@ def list_greetings(request):
         'djversion': django.get_version(),
         'api_greetings': api_greetings,
     }
-    # among other things, the gtoken cookie contains
+
+    return render(request, 'testapp/index.html', context_dict)
+
+
+def widget(request):
+    return render(request, 'testapp/widget.html', {})
+
+
+def user_logout(request):
+    # this just logs out of django, not google+
+    # the javascript on the index.html page logs out of google+ when it sees the django user is logged out
+    logout(request)
+    return render(request, 'testapp/landing.html')
+
+
+def create_greeting(request):
+    if request.method == 'POST':
+        form = CreateGreetingForm(request.POST)
+        if form.is_valid():
+            greeting = form.save(commit=False)
+            if request.user.is_authenticated():
+                greeting.author = request.user
+            greeting.save()
+            cache.delete(MEMCACHE_GREETINGS)
+    return redirect('/testapp/')
+
+
+def landing_page(request):
+   # among other things, the gtoken cookie contains
     # 1) the user's email, which is set here to the username for the django.auth User model
     # 2) a user_id that is specific to each google+ user for each client. Here it becomes the password for the user
     if 'gtoken' in request.COOKIES:
@@ -101,44 +109,15 @@ def list_greetings(request):
                     print 'error is ' + str(e)
                     return render(request, 'testapp/index.html', context_dict)
             login(request, user)
-            if user.is_authenticated:
-                print '\nuser is authenticated'
-            else:
-                print '\nnot authenticated'
         else:
             # this shouldn't ever happen
             print 'this shouldnt ever happen'
             logout(request)
     else:
         logout(request)
-    return render(request, 'testapp/index.html', context_dict)
-
-
-def widget(request):
-    return render(request, 'testapp/widget.html', {})
-
-
-def user_logout(request):
-    # this just logs out of django, not google+
-    # the javascript on the index.html page logs out of google+ when it sees the django user is logged out
-    logout(request)
-    return render(request, 'testapp/index.html')
-
-
-def create_greeting(request):
-    if request.method == 'POST':
-        form = CreateGreetingForm(request.POST)
-        if form.is_valid():
-            greeting = form.save(commit=False)
-            if request.user.is_authenticated():
-                greeting.author = request.user
-            greeting.save()
-            cache.delete(MEMCACHE_GREETINGS)
-    return redirect('/testapp/')
-
-def landing_page(request):
     return render(request, 'testapp/landing.html',
         {'request': request})
+
 
 def create_new_user(request):
     if request.method == 'POST':
