@@ -36,5 +36,31 @@
     <a type="button" class="btn btn-primary" href="#">Save As Spreadsheet</a>
     <br>
 
+    <h3>Searched Parameters</h3>
+    {% if queries.tumors_selected %}
+        <h5>Tumors Selected:</h5>
+        <ul>
+            {% for key, value in queries.tumors_selected.items %}
+                <li>{{ key }} - {{ value }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 
+    {% if queries.elements_selected %}
+        <h5>Elements Selected:</h5>
+        <ul>
+            {% for key, value in queries.elements_selected.items %}
+                <li>{{ key }} - {{ value }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if queries.platforms_selected %}
+        <h5>Platforms Selected:</h5>
+        <ul>
+            {% for key, value in queries.platforms_selected.items %}
+                <li>{{ key }} - {{ value }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

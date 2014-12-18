@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     url(r'^genespot-re', views.genespotre),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^search/', views.search),
-    url(r'^search_results/', views.search_results),
+    url(r'^search_results/', views.search_results, name='search_results'),
     url(r'^css_test/', views.css_test),
 
 )

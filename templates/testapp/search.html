@@ -11,7 +11,7 @@
 
     <h2>Search Metadata Page</h2>
 
-        <div class="search-right-column">
+        <div class="search-right-column" data-spy="affix" data-offset-top="125" data-offset-bottom="10">
             Search Criteria:
             <div id="tumors-search-criteria">
 {#                <h5>Tumors selected:</h5>#}
@@ -21,8 +21,10 @@
             <div id="elements-search-criteria"></div>
 {#            <h5>Platforms selected:</h5>#}
             <div id="platforms-search-criteria"></div>
-
-        <a type="submit" class="btn btn-primary space-top-10" href="/search_results">Search</a>
+        <form id="search-criteria" method="post" action="{% url 'search_results' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary space-top-10">Search</button>
+        </form>
     </div>
 
 
@@ -99,26 +101,57 @@
                 </div>
             </div>
         </div>
-        <div class="panel panel-default">
+        <div class="panel panel-default last-panel">
             <div class="panel-heading">
                 <h5>
                     <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseThree">
-                        Patient Characteristics
+                        Simple Search Criteria
                     </a>
                 </h5>
             </div>
             <div id="collapseThree" class="panel-collapse collapse in">
                 <div class="panel-body">
-                    <p>Put patient characteristics options here</p>
                     <h5>Patient Data</h5>
                     <ul>
-                        <li>Gender (m,f,na)</li>
-                        <li>age at diagnosis (range(10,90))</li>
-                        <li>vital status (alive, dead, na)</li>
-                        <li>year of diagnosis (range(1978, 2013))</li>
-                        <li>days-to-last-followup / days-to-death (range(-833, +11252))</li>
-                        <li>prior diagnosis (y, n, na)</li>
-                        <li>new tumor event after initial treatment (y, n, na)</li>
+                        <li>age at diagnosis (threashold or range)</li>
+                        <li>
+                            vital status and followup
+                            <ul>
+                                <li>Alive/Dead</li>
+                                <li>Follow-up (number of days, usually used with 'Alive')</li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <h5>Diagnosis Information</h5>
+                    <ul>
+                        <li>Disease Code (selected 1+ from list of ~30)</li>
+                        <li>Pathologic Stage (range from string)</li>
+                        <li>Histologic Grade (range from string)</li>
+                        <li>Pathologic T/N/M (range from string)</li>
+                    </ul>
+                    <h5>Molecular Data Type</h5>
+                    <ul>
+                        <li>
+                            DNA Data
+                            <ul>
+                                <li>DNA (platforms list, formats list)</li>
+                                <li>SNP chip or Copy-Number (platform list, formats list)</li>
+                                <li>DNA methylation (platform list, formats list)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            mRNA Data
+                            <ul>
+                                <li>mRNA (platforms list, formats list)</li>
+                                <li>miRNA (platforms list, formats list)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Protein Data
+                            <ul>
+                                <li>RPPA (Level-3 data matrix)</li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>

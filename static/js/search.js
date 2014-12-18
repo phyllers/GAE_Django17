@@ -36,7 +36,6 @@ $(document).ready(function() {
     $('[name="tumors-selected"]').on('change', function(){
         if (this.checked) {
             tumors_selected[this.id] = this.labels[0].innerText.replace(/^\s+|\s+$/g, '');
-            console.log(tumors_selected);
         } else {
             delete tumors_selected[this.id];
         }
@@ -59,5 +58,21 @@ $(document).ready(function() {
         if (!this.checked) {
             $('#select-all')[0].checked="";
         }
+    })
+
+    $('#search-criteria').submit(function(e) {
+        $('<input />').attr('type', 'hidden')
+            .attr('name', 'elements_selected')
+            .attr('value', JSON.stringify(elements_selected))
+            .appendTo('#search-criteria');
+        $('<input />').attr('type', 'hidden')
+            .attr('name', 'platforms_selected')
+            .attr('value', JSON.stringify(platforms_selected))
+            .appendTo('#search-criteria');
+        $('<input />').attr('type', 'hidden')
+            .attr('name', 'tumors_selected')
+            .attr('value', JSON.stringify(tumors_selected))
+            .appendTo('#search-criteria');
+        return true;
     })
 });
