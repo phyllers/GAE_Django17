@@ -59,4 +59,20 @@ $(document).ready(function() {
             $('#select-all')[0].checked="";
         }
     })
+
+    $('#search-criteria').submit(function(e) {
+        $('<input />').attr('type', 'hidden')
+            .attr('name', 'elements_selected')
+            .attr('value', JSON.stringify(elements_selected))
+            .appendTo('#search-criteria');
+        $('<input />').attr('type', 'hidden')
+            .attr('name', 'platforms_selected')
+            .attr('value', JSON.stringify(platforms_selected))
+            .appendTo('#search-criteria');
+        $('<input />').attr('type', 'hidden')
+            .attr('name', 'tumors_selected')
+            .attr('value', JSON.stringify(tumors_selected))
+            .appendTo('#search-criteria');
+        return true;
+    })
 });

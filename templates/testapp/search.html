@@ -21,8 +21,10 @@
             <div id="elements-search-criteria"></div>
 {#            <h5>Platforms selected:</h5>#}
             <div id="platforms-search-criteria"></div>
-
-        <a type="submit" class="btn btn-primary space-top-10" href="/search_results">Search</a>
+        <form id="search-criteria" method="post" action="{% url 'search_results' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary space-top-10">Search</button>
+        </form>
     </div>
 
 

@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from urllib2 import Request, urlopen, URLError
 from django.db import IntegrityError
 from identitytoolkit import gitkitclient
+from django.views.decorators.csrf import csrf_protect
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 import django
@@ -181,17 +182,23 @@ def search(request):
                                                    'elements': elements,
                                                    'platforms': platforms})
 
+@csrf_protect
 def search_results(request):
-    fake_data = []
 
-    url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
-    req = Request(url)
-    results = json.load(urlopen(req))
-    for i in range(1, 10):
-        fake_data.append({'name':'Some Title %i' % i,
-                          'source':'Kitty ipsum',
-                          'visibility': 'Public',
-                          'updated': time.strftime('%m/%d/%Y')})
-    return render(request, 'testapp/search_results.html', {'request': request,
-                                                           'data': results,})
+    if request.method == 'POST':
+        url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
+        req = Request(url)
+        results = json.load(urlopen(req))
+        queries = {}
+
+        if 'elements_selected' in request.POST:
+            queries['elements_selected'] = json.loads(request.POST['elements_selected'])
+        if 'platforms_selected' in request.POST:
+            queries['platforms_selected'] = json.loads(request.POST['platforms_selected'])
+        if 'tumors_selected' in request.POST:
+            queries['tumors_selected'] = json.loads(request.POST['tumors_selected'])
+
+        return render(request,'testapp/search_results.html', {'request': request,
+                                                           'data': results,
+                                                           'queries': queries})
 
