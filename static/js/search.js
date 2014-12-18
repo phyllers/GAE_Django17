@@ -36,7 +36,6 @@ $(document).ready(function() {
     $('[name="tumors-selected"]').on('change', function(){
         if (this.checked) {
             tumors_selected[this.id] = this.labels[0].innerText.replace(/^\s+|\s+$/g, '');
-            console.log(tumors_selected);
         } else {
             delete tumors_selected[this.id];
         }
