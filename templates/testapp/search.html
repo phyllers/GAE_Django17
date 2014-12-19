@@ -4,6 +4,8 @@
 {% block header %}
 {#<link type="text/css" rel="stylesheet" href="{% static 'css/search.css' %}" />#}
     <script type="text/javascript" src="{% static 'js/search.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/d3.min.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -158,5 +160,7 @@
         </div>
     </div>
 
+    <div id="treegraph"></div>
+    <script type="text/javascript" src="{% static 'js/tree-graph.js' %}"></script>
 
 {% endblock %}
