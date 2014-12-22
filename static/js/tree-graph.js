@@ -1,7 +1,7 @@
 
 
 var w = 800,
-    h = 400,
+    h = 100,
     x = d3.scale.linear().range([0, w]),
     y = d3.scale.linear().range([0, h]),
     color = d3.scale.category20c(),
@@ -40,7 +40,8 @@ d3.json("/static/js/data.json", function(data) {
     cell.append("svg:rect")
         .attr("width", function(d) { return d.dx - 1; })
         .attr("height", function(d) { return d.dy - 1; })
-        .style("fill", function(d) { return color(d.parent.name); });
+        .style("fill", function(d) { return color(d.name); })
+        .style('cursor', 'pointer');
 
     cell.append("svg:text")
         .attr("x", function(d) { return d.dx / 2; })
@@ -57,7 +58,6 @@ d3.json("/static/js/data.json", function(data) {
         zoom(node);
     });
 });
-
 function size(d) {
     return d.size;
 }
