@@ -4,6 +4,8 @@
 {% block header %}
 {#<link type="text/css" rel="stylesheet" href="{% static 'css/search.css' %}" />#}
     <script type="text/javascript" src="{% static 'js/search.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/d3.min.js' %}"></script>
+
 {% endblock %}
 
 {% block content %}
@@ -158,5 +160,10 @@
         </div>
     </div>
 
+    <h4>This is a sample treemap of data. TODO: Get tooltips working</h4>
+    <div id="graph-tip"></div>
+    <div id="treegraph" class="space-bottom-10"></div>
+
+    <script type="text/javascript" src="{% static 'js/tree-graph.js' %}"></script>
 
 {% endblock %}

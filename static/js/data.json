@@ -1,0 +1,43 @@
+{
+ "name": "Data",
+ "children": [
+  {
+   "name": "Project",
+   "children": [
+          {"name": "BLCA-US", "size": 3938},
+      {"name": "BLCA-CN", "size": 3812},
+      {"name": "BOCA-UK", "size": 6714},
+      {"name": "GBM-US", "size": 743}
+       ]
+  },
+  {
+   "name": "Primary Site",
+   "children": [
+        {"name": "Brain", "size": 17010},
+        {"name": "Breast", "size": 5842},
+        {"name": "Blood", "size": 1983},
+        {"name": "Lung", "size": 2047},
+        {"name": "Head and Neck", "size": 1375},
+        {"name": "Kidney", "size": 2202},
+        {"name": "Liver", "size": 1382}
+   ]
+  },
+  {
+   "name": "Gender",
+   "children": [
+      {"name": "Male", "size": 4721},
+      {"name": "Female", "size": 4294}
+     ]
+    },
+
+  {
+   "name": "Tumor Stage",
+   "children": [
+    {"name": "No Data", "size": 8833},
+    {"name": "Others", "size": 1732},
+    {"name": "4", "size": 3623},
+    {"name": "A", "size": 10066}
+   ]
+  }
+ ]
+}
