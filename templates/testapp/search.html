@@ -15,13 +15,8 @@
 
         <div class="search-right-column" data-spy="affix" data-offset-top="125" data-offset-bottom="10">
             Search Criteria:
-            <div id="tumors-search-criteria">
-{#                <h5>Tumors selected:</h5>#}
-{#                <ul></ul>#}
-            </div>
-{#            <h5>Elements selected:</h5>#}
+            <div id="tumors-search-criteria"></div>
             <div id="elements-search-criteria"></div>
-{#            <h5>Platforms selected:</h5>#}
             <div id="platforms-search-criteria"></div>
         <form id="search-criteria" method="post" action="{% url 'search_results' %}">
             {% csrf_token %}

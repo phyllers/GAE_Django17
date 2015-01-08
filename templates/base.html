@@ -48,23 +48,19 @@
                 <li {% if request.path == '/search/' or request.path == '/search_results/' %}class="active"{% endif %}><a href="/search/">Search</a></li>
                 {% endif %}
                 <li {% if request.path == '/genespot-re/' %}class="active"{% endif %}><a href="/genespot-re/">Genespot-RE Styles</a></li>
-                <!--<li {% if request.path == '/css_test/' %}class="active"{% endif %}><a href="/css_test/">CSS</a></li>-->
             </ul>
         </div>
         <div class="nav navbar-right">
             <div id="user-login" class="navbar-form inline-block">
                 <!-- commented out only because just logging in with a google account creates a new user-->
                 <!--<a href="/accounts/create_user/">Create User</a>-->
-                Hello,
                 {% if user.is_authenticated %}
-                    {{ user.first_name }} {{ user.last_name }}. You are logged in as
+                    Hello, {{ user.first_name }} {{ user.last_name }}. You are logged in as
                     {{ user.email }}
                     [<a href="/accounts/logout/">sign out</a>]
                 {% else %}
-                    World!
                     [<a href="/widget?mode=select">Sign In</a>]
                 {% endif %}
-                <div id="signin"></div>
             </div>
         </div>
     </div>
