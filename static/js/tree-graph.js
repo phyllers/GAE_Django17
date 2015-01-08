@@ -25,8 +25,8 @@ var svg = d3.select("#treegraph").append("div")
     .attr("transform", "translate(.5,.5)");
 
 d3.json("https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/fake_treegraph_data", function(data) {
-    node = root = data;
-    var nodes = treemap.nodes($.parseJSON(root.msg))
+    node = root = $.parseJSON(data.msg);
+    var nodes = treemap.nodes(root)
         .filter(function(d) { return !d.children; });
 
     var cell = svg.selectAll("g")
