@@ -24,7 +24,7 @@ var svg = d3.select("#treegraph").append("div")
     .append("svg:g")
     .attr("transform", "translate(.5,.5)");
 
-d3.json("https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/fake_treegraph_data", function(data) {
+d3.json("https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fake_treegraph_data", function(data) {
     node = root = $.parseJSON(data.msg);
     var nodes = treemap.nodes(root)
         .filter(function(d) { return !d.children; });
