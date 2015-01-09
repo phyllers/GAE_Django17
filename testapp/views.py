@@ -179,11 +179,25 @@ def search(request):
                  {'id': 10, 'label': 'HumanMethylation27'},
                  {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
 
+    url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata_attr'
+    req = Request(url)
+    attr_details = json.load(urlopen(req))
+    attr_details.pop('kind')
+    attr_details.pop('etag')
+    attr_details.pop('sample') # this has to be removed otherwise the data is too large
+    # attr_details.pop('tumor_weight')
 
+    attr_details
+    sorted_keys = sorted(attr_details.keys())
+    print sorted_keys
+    for key, value in attr_details.items():
+        attr_details[key] = sorted(value)
     return render(request, 'testapp/search.html', {'request': request,
-                                                   'tumor_types': tumor_types,
-                                                   'elements': elements,
-                                                   'platforms': platforms})
+                                                   # 'tumor_types': tumor_types,
+                                                   # 'elements': elements,
+                                                   # 'platforms': platforms,
+                                                   'attr_details': attr_details,
+                                                   'sorted_keys': sorted_keys})
 
 @csrf_protect
 def search_results(request):
