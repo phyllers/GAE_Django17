@@ -15,9 +15,10 @@ from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 import django
 import json
+from google.appengine.api import urlfetch
 import time
 import requests
-
+urlfetch.set_default_fetch_deadline(45)
 
 gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config.json')
 
@@ -143,61 +144,80 @@ def css_test(request):
 
 @login_required
 def search(request):
-    tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
-                   {'id': 'BRCA', 'label': 'Breast Invasive Carcinoma'},
-                   {'id': 'COAD', 'label': 'Colon Adenocarcinoma'},
-                   {'id': 'GBM', 'label': 'Glioblastoma Multiforme'},
-                   {'id': 'HNSC', 'label': 'Head and Neck Squamous Cell Carcinoma'},
-                   {'id': 'KIRC', 'label': 'Kidney Renal Clear Cell Carcinoma'},
-                   {'id': 'LUAD', 'label': 'Lung Adenocarcinoma'},
-                   {'id': 'LUSC', 'label': 'Lung Squamous Cell Carcinoma'},
-                   {'id': 'OV', 'label': 'Ovarian Serous Cystadenocarcinoma'},
-                   {'id': 'READ', 'label': 'Rectum Adenocarcinoma'},
-                   {'id': 'UCEC', 'label': 'Uterine Corpus Endometrial Carcinoma'}]
-
-    elements = [{'id': 1, 'label': 'Participant'},
-                {'id': 2, 'label': 'Sample'},
-                {'id': 3, 'label': 'Portion'},
-                {'id': 4, 'label': 'Analyte'},
-                {'id': 5, 'label': 'Slide'},
-                {'id': 6, 'label': 'Aliquot'},
-                {'id': 7, 'label': '(Radiation)'},
-                {'id': 8, 'label': '(Drug)'},
-                {'id': 9, 'label': '(Examination)'},
-                {'id': 10, 'label': '(Surgery)'},
-                {'id': 11, 'label': 'Shipped Portion'}]
-
-    platforms = [{'id': 1, 'label': 'ABI'},
-                 {'id': 2, 'label': 'AgilentG4502A_07'},
-                 {'id': 3, 'label': 'CGH-1x1M_G4447A'},
-                 {'id': 4, 'label': 'Genome_Wide_SNP_6'},
-                 {'id': 5, 'label': 'H-miRNA_8x15k'},
-                 {'id': 6, 'label': 'HG-CGH-244A'},
-                 {'id': 7, 'label': 'HG-U133_Plus_2'},
-                 {'id': 8, 'label': 'HT_HG_U133A'},
-                 {'id': 9, 'label': 'Human1MDuo'},
-                 {'id': 10, 'label': 'HumanMethylation27'},
-                 {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
+    # tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
+    #                {'id': 'BRCA', 'label': 'Breast Invasive Carcinoma'},
+    #                {'id': 'COAD', 'label': 'Colon Adenocarcinoma'},
+    #                {'id': 'GBM', 'label': 'Glioblastoma Multiforme'},
+    #                {'id': 'HNSC', 'label': 'Head and Neck Squamous Cell Carcinoma'},
+    #                {'id': 'KIRC', 'label': 'Kidney Renal Clear Cell Carcinoma'},
+    #                {'id': 'LUAD', 'label': 'Lung Adenocarcinoma'},
+    #                {'id': 'LUSC', 'label': 'Lung Squamous Cell Carcinoma'},
+    #                {'id': 'OV', 'label': 'Ovarian Serous Cystadenocarcinoma'},
+    #                {'id': 'READ', 'label': 'Rectum Adenocarcinoma'},
+    #                {'id': 'UCEC', 'label': 'Uterine Corpus Endometrial Carcinoma'}]
+    #
+    # elements = [{'id': 1, 'label': 'Participant'},
+    #             {'id': 2, 'label': 'Sample'},
+    #             {'id': 3, 'label': 'Portion'},
+    #             {'id': 4, 'label': 'Analyte'},
+    #             {'id': 5, 'label': 'Slide'},
+    #             {'id': 6, 'label': 'Aliquot'},
+    #             {'id': 7, 'label': '(Radiation)'},
+    #             {'id': 8, 'label': '(Drug)'},
+    #             {'id': 9, 'label': '(Examination)'},
+    #             {'id': 10, 'label': '(Surgery)'},
+    #             {'id': 11, 'label': 'Shipped Portion'}]
+    #
+    # platforms = [{'id': 1, 'label': 'ABI'},
+    #              {'id': 2, 'label': 'AgilentG4502A_07'},
+    #              {'id': 3, 'label': 'CGH-1x1M_G4447A'},
+    #              {'id': 4, 'label': 'Genome_Wide_SNP_6'},
+    #              {'id': 5, 'label': 'H-miRNA_8x15k'},
+    #              {'id': 6, 'label': 'HG-CGH-244A'},
+    #              {'id': 7, 'label': 'HG-U133_Plus_2'},
+    #              {'id': 8, 'label': 'HT_HG_U133A'},
+    #              {'id': 9, 'label': 'Human1MDuo'},
+    #              {'id': 10, 'label': 'HumanMethylation27'},
+    #              {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
 
     url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata_attr'
     req = Request(url)
     attr_details = json.load(urlopen(req))
-    attr_details.pop('kind')
-    attr_details.pop('etag')
-    attr_details.pop('sample') # this has to be removed otherwise the data is too large
+    attr_list = attr_details['attribute_list']
+
+    url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmattr'
+    req = Request(url)
+    attributes = json.load(urlopen(req))
+    attributes_list = attributes['items']
+    clin_attr = []
+    samp_attr = []
+    gnab_attr = []
+    for item in attributes_list:
+        spec = item['spec']
+        if spec == 'CLIN':
+            clin_attr.append(item)
+        elif spec == 'SAMP':
+            samp_attr.append(item)
+        elif spec == 'GNAB':
+            gnab_attr.append(item)
+
+    # attr_list.pop('kind')
+    # attr_list.pop('etag')
+    # attr_list.pop('sample') # this has to be removed otherwise the data is too large
     # attr_details.pop('tumor_weight')
 
-    attr_details
-    sorted_keys = sorted(attr_details.keys())
-    print sorted_keys
-    for key, value in attr_details.items():
-        attr_details[key] = sorted(value)
+    sorted_keys = sorted(attr_list.keys())
+    for key, value in attr_list.items():
+        attr_list[key] = sorted(value, key=lambda k: int(k['count']), reverse=True)
     return render(request, 'testapp/search.html', {'request': request,
                                                    # 'tumor_types': tumor_types,
                                                    # 'elements': elements,
                                                    # 'platforms': platforms,
-                                                   'attr_details': attr_details,
-                                                   'sorted_keys': sorted_keys})
+                                                   'attr_list': attr_list,
+                                                   # 'sorted_keys': sorted_keys,
+                                                   'clin_attr': clin_attr,
+                                                   'samp_attr': samp_attr,
+                                                   'gnab_attr': gnab_attr})
 
 @csrf_protect
 def search_results(request):

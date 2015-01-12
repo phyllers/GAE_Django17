@@ -108,32 +108,87 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h5>
-                    <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseTwo">
-                        Fake Data Search
+                    <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseOne">
+                        Clinical Data Search
                     </a>
                 </h5>
             </div>
-            <div id="collapseTwo" class="panel-collapse collapse in">
+            <div id="collapseOne" class="panel-collapse collapse in">
                 <div class="panel-body">
 
-                    {% for key in sorted_keys %}
-                    <h5>{{ key }}</h5>
+                    {% for attr in clin_attr %}
+                    <h5>{{ attr.attribute }}</h5>
                     <ul class="search-checkbox-list">
-                        {% for v in attr_details|get_item:key %}
+                        {% for v in attr_list|get_item:attr.attribute %}
                             <li>
-                                <label for="element-{{ v }}">
-                                    <input type="checkbox" name="elements-selected" id="element-{{ v }}" >
-                                    {{ v }}
+                                <label for="element-{{ v.value }}">
+                                    <input type="checkbox" name="elements-selected" id="element-{{ v.value }}" >
+                                    {{ v.count }} - {{ v.value }}
                                 </label>
                             </li>
                         {% endfor %}
                     </ul>
                     {% endfor %}
-
-
                 </div>
             </div>
         </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5>
+                    <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseTwo">
+                        Sample Data Search
+                    </a>
+                </h5>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                    {% for attr in samp_attr %}
+                    <h5>{{ attr.attribute }}</h5>
+                    <ul class="search-checkbox-list">
+                        {% for v in attr_list|get_item:attr.attribute %}
+                            <li>
+                                <label for="element-{{ v.value }}">
+                                    <input type="checkbox" name="elements-selected" id="element-{{ v.value }}" >
+                                    {{ v.count }} - {{ v.value }}
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h5>
+                    <a data-toggle="collapse" data-parent="#search-accordion" href="#collapseThree">
+                        Gene Data Search
+                    </a>
+                </h5>
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse">
+                <div class="panel-body">
+
+                    {% for attr in gnab_attr %}
+                    <h5>{{ attr.attribute }}</h5>
+                    <ul class="search-checkbox-list">
+                        {% for v in attr_list|get_item:attr.attribute %}
+                            <li>
+                                <label for="element-{{ v.value }}">
+                                    <input type="checkbox" name="elements-selected" id="element-{{ v.value }}" >
+                                    {{ v.count }} - {{ v.value }}
+                                </label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
 
 {#        <div class="panel panel-default last-panel">#}
 {#            <div class="panel-heading">#}
