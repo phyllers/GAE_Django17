@@ -198,3 +198,7 @@ def search_results(request):
     return render(request, 'testapp/search_results.html', {'request': request,
                                                            'data': results,})
 
+
+def bubble_animation(request):
+    return render(request, 'testapp/bubble_animation.html', {})
+
