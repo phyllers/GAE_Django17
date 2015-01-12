@@ -1,5 +1,5 @@
-application: isb-cgc
-version: 1
+application: striking-berm-771
+version: django17
 runtime: python27
 api_version: 1
 threadsafe: true

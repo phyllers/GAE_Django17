@@ -10,14 +10,16 @@ ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
+LOGIN_URL = "/widget?mode=select"
+
 MANAGERS = ADMINS
 
 if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):  # or os.getenv('SETTINGS_MODE') == 'prod':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '/cloudsql/isb-cgc:demo01',
-            'NAME': 'demo',
+            'HOST': '/cloudsql/striking-berm-771:django-test',
+            'NAME': 'pong',
             'USER': 'root'
         }
     }
@@ -25,8 +27,8 @@ elif os.getenv('SETTINGS_MODE') == 'prod':
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': '173.194.225.46',
-            'NAME': 'demo',
+            'HOST': '173.194.248.51',
+            'NAME': 'pong',
             'USER': 'root',
             'PASSWORD': 'password'
         }
@@ -37,7 +39,7 @@ else:
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'test',
             'USER': 'root',
-            'PASSWORD': ''
+            'PASSWORD': 'MyNewPass'
         }
     }
 

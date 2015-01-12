@@ -11,6 +11,7 @@ from urllib2 import Request, urlopen, URLError
 from django.db import IntegrityError
 from identitytoolkit import gitkitclient
 from django.db.models import Max
+from django.contrib.auth.decorators import login_required
 import django
 import json
 import time
@@ -22,8 +23,11 @@ gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config
 MEMCACHE_GREETINGS = 'greetings'
 
 
+def genespotre(request):
+    return render(request, 'testapp/genespot-re-demo.html', {})
+
+
 def list_greetings(request):
-    print '\nin list_greetings'
     try:
         url = 'https://striking-berm-771.appspot.com/_ah/api/gae_endpoints/v1/hellogreeting/'
         req3 = Request(url)
@@ -107,7 +111,7 @@ def landing_page(request):
                     # used to get integrity errors when user id's were automatically
                     # set to 2147483647
                     print 'error is ' + str(e)
-                    return render(request, 'testapp/index.html', context_dict)
+                    return render(request, 'testapp/landing.html', {})
             login(request, user)
         else:
             # this shouldn't ever happen
@@ -136,6 +140,7 @@ def create_new_user(request):
 def css_test(request):
     return render(request, 'testapp/css_test.html', {'request': request})
 
+@login_required
 def search(request):
     tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
                    {'id': 'BRCA', 'label': 'Breast Invasive Carcinoma'},
@@ -192,4 +197,8 @@ def search_results(request):
                           'updated': time.strftime('%m/%d/%Y')})
     return render(request, 'testapp/search_results.html', {'request': request,
                                                            'data': results,})
+
+
+def bubble_animation(request):
+    return render(request, 'testapp/bubble_animation.html', {})
 

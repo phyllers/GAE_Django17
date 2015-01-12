@@ -13,3 +13,7 @@ For SASS: run this from root directory
 ```
 sass --watch sass/main.sass:static/css/main.css
 ```
+
+
+NOTE: Google's Python Development Server does NOT come with pycrypto and must be added to local installed in local virtual environment used to run dev_appserver.py
+
