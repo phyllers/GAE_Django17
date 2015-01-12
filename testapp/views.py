@@ -111,7 +111,7 @@ def landing_page(request):
                     # used to get integrity errors when user id's were automatically
                     # set to 2147483647
                     print 'error is ' + str(e)
-                    return render(request, 'testapp/index.html', context_dict)
+                    return render(request, 'testapp/landing.html', {})
             login(request, user)
         else:
             # this shouldn't ever happen
