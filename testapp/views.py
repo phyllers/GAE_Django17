@@ -276,5 +276,10 @@ def search_results(request):
 
 
 def bubble_animation(request):
+    # eventually change this so the api call is made on server, not client side
     return render(request, 'testapp/bubble_animation.html', {})
+
+
+def circle_graphs(request):
+    return render(request, 'testapp/circle_graphs.html', {})
 

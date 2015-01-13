@@ -4,4 +4,5 @@ urlpatterns = patterns('testapp.views',
     url(r'^$', 'landing_page'),
     url(r'sign/$', 'create_greeting'),
     url(r'^bubble_animation', 'bubble_animation', name='bubble_animation'),
+    url(r'^circle_graphs', 'circle_graphs', name='circle_graphs'),
 )
