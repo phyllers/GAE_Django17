@@ -15,9 +15,8 @@ from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 import django
 import json
-import time
-import requests
-
+from google.appengine.api import urlfetch
+urlfetch.set_default_fetch_deadline(60)
 
 gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config.json')
 
@@ -143,65 +142,128 @@ def css_test(request):
 
 @login_required
 def search(request):
-    tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
-                   {'id': 'BRCA', 'label': 'Breast Invasive Carcinoma'},
-                   {'id': 'COAD', 'label': 'Colon Adenocarcinoma'},
-                   {'id': 'GBM', 'label': 'Glioblastoma Multiforme'},
-                   {'id': 'HNSC', 'label': 'Head and Neck Squamous Cell Carcinoma'},
-                   {'id': 'KIRC', 'label': 'Kidney Renal Clear Cell Carcinoma'},
-                   {'id': 'LUAD', 'label': 'Lung Adenocarcinoma'},
-                   {'id': 'LUSC', 'label': 'Lung Squamous Cell Carcinoma'},
-                   {'id': 'OV', 'label': 'Ovarian Serous Cystadenocarcinoma'},
-                   {'id': 'READ', 'label': 'Rectum Adenocarcinoma'},
-                   {'id': 'UCEC', 'label': 'Uterine Corpus Endometrial Carcinoma'}]
+    # tumor_types = [{'id': 'BLCA', 'label': 'Bladder Urothelial Carcinoma'},
+    #                {'id': 'BRCA', 'label': 'Breast Invasive Carcinoma'},
+    #                {'id': 'COAD', 'label': 'Colon Adenocarcinoma'},
+    #                {'id': 'GBM', 'label': 'Glioblastoma Multiforme'},
+    #                {'id': 'HNSC', 'label': 'Head and Neck Squamous Cell Carcinoma'},
+    #                {'id': 'KIRC', 'label': 'Kidney Renal Clear Cell Carcinoma'},
+    #                {'id': 'LUAD', 'label': 'Lung Adenocarcinoma'},
+    #                {'id': 'LUSC', 'label': 'Lung Squamous Cell Carcinoma'},
+    #                {'id': 'OV', 'label': 'Ovarian Serous Cystadenocarcinoma'},
+    #                {'id': 'READ', 'label': 'Rectum Adenocarcinoma'},
+    #                {'id': 'UCEC', 'label': 'Uterine Corpus Endometrial Carcinoma'}]
+    #
+    # elements = [{'id': 1, 'label': 'Participant'},
+    #             {'id': 2, 'label': 'Sample'},
+    #             {'id': 3, 'label': 'Portion'},
+    #             {'id': 4, 'label': 'Analyte'},
+    #             {'id': 5, 'label': 'Slide'},
+    #             {'id': 6, 'label': 'Aliquot'},
+    #             {'id': 7, 'label': '(Radiation)'},
+    #             {'id': 8, 'label': '(Drug)'},
+    #             {'id': 9, 'label': '(Examination)'},
+    #             {'id': 10, 'label': '(Surgery)'},
+    #             {'id': 11, 'label': 'Shipped Portion'}]
+    #
+    # platforms = [{'id': 1, 'label': 'ABI'},
+    #              {'id': 2, 'label': 'AgilentG4502A_07'},
+    #              {'id': 3, 'label': 'CGH-1x1M_G4447A'},
+    #              {'id': 4, 'label': 'Genome_Wide_SNP_6'},
+    #              {'id': 5, 'label': 'H-miRNA_8x15k'},
+    #              {'id': 6, 'label': 'HG-CGH-244A'},
+    #              {'id': 7, 'label': 'HG-U133_Plus_2'},
+    #              {'id': 8, 'label': 'HT_HG_U133A'},
+    #              {'id': 9, 'label': 'Human1MDuo'},
+    #              {'id': 10, 'label': 'HumanMethylation27'},
+    #              {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
 
-    elements = [{'id': 1, 'label': 'Participant'},
-                {'id': 2, 'label': 'Sample'},
-                {'id': 3, 'label': 'Portion'},
-                {'id': 4, 'label': 'Analyte'},
-                {'id': 5, 'label': 'Slide'},
-                {'id': 6, 'label': 'Aliquot'},
-                {'id': 7, 'label': '(Radiation)'},
-                {'id': 8, 'label': '(Drug)'},
-                {'id': 9, 'label': '(Examination)'},
-                {'id': 10, 'label': '(Surgery)'},
-                {'id': 11, 'label': 'Shipped Portion'}]
+    url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata_attr'
+    result = urlfetch.fetch(url)
+    attr_details = json.loads(result.content)
+    attr_list = attr_details['attribute_list']
 
-    platforms = [{'id': 1, 'label': 'ABI'},
-                 {'id': 2, 'label': 'AgilentG4502A_07'},
-                 {'id': 3, 'label': 'CGH-1x1M_G4447A'},
-                 {'id': 4, 'label': 'Genome_Wide_SNP_6'},
-                 {'id': 5, 'label': 'H-miRNA_8x15k'},
-                 {'id': 6, 'label': 'HG-CGH-244A'},
-                 {'id': 7, 'label': 'HG-U133_Plus_2'},
-                 {'id': 8, 'label': 'HT_HG_U133A'},
-                 {'id': 9, 'label': 'Human1MDuo'},
-                 {'id': 10, 'label': 'HumanMethylation27'},
-                 {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
+    url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmattr'
+    result = urlfetch.fetch(url)
+    attributes = json.loads(result.content)
+    attributes_list = attributes['items']
+    clin_attr = []
+    samp_attr = []
+    gnab_attr = []
+    for item in attributes_list:
+        spec = item['spec']
+        if spec == 'CLIN':
+            clin_attr.append(item)
+        elif spec == 'SAMP':
+            samp_attr.append(item)
+        elif spec == 'GNAB':
+            gnab_attr.append(item)
 
+    # attr_list.pop('kind')
+    # attr_list.pop('etag')
+    # attr_list.pop('sample') # this has to be removed otherwise the data is too large
+    # attr_details.pop('tumor_weight')
 
+    sorted_keys = sorted(attr_list.keys())
+    for key, value in attr_list.items():
+        attr_list[key] = sorted(value, key=lambda k: int(k['count']), reverse=True)
     return render(request, 'testapp/search.html', {'request': request,
-                                                   'tumor_types': tumor_types,
-                                                   'elements': elements,
-                                                   'platforms': platforms})
+                                                   # 'tumor_types': tumor_types,
+                                                   # 'elements': elements,
+                                                   # 'platforms': platforms,
+                                                   'attr_list': attr_list,
+                                                   # 'sorted_keys': sorted_keys,
+                                                   'clin_attr': clin_attr,
+                                                   'samp_attr': samp_attr,
+                                                   'gnab_attr': gnab_attr})
 
 @csrf_protect
 def search_results(request):
 
     if request.method == 'POST':
-        url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
+
+        search_filter = json.loads(request.POST['search_filter'])
+        search_dict = {}
+
+        # Aggregate filters by feature
+        for key in search_filter.keys():
+            catval = key.split('-')
+            if catval[0] in search_dict:
+                search_dict[catval[0]].append(catval[1])
+            else:
+                search_dict[catval[0]] = [catval[1]]
+        print search_dict
+
+        url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata?'
+
+        # construct url
+        for key, value in search_dict.items():
+            if len(value) > 1:
+                # create list
+                temp = value
+                value = '['
+                first = True
+                for item in temp:
+                    if first:
+                        value += item.encode('ascii', 'ignore')
+                        first = False
+                    else:
+                        value += ',' + item.encode('ascii', 'ignore')
+                value += ']'
+            else:
+                value = value[0].encode('ascii', 'ignore')
+            print value
+            url += key + '=' + str(value) + '&'
+
+        print url
+        # url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
         req = Request(url)
         results = json.load(urlopen(req))
         queries = {}
-
-        if 'elements_selected' in request.POST:
-            queries['elements_selected'] = json.loads(request.POST['elements_selected'])
-        if 'platforms_selected' in request.POST:
-            queries['platforms_selected'] = json.loads(request.POST['platforms_selected'])
-        if 'tumors_selected' in request.POST:
-            queries['tumors_selected'] = json.loads(request.POST['tumors_selected'])
+        total_rows = len(results['items'])
 
         return render(request,'testapp/search_results.html', {'request': request,
-                                                           'data': results,
-                                                           'queries': queries})
+                                                           'data': results['items'][:10],
+                                                           'api_url': url,
+                                                           'total_rows': total_rows})
 
