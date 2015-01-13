@@ -179,12 +179,12 @@ def search(request):
     #              {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
 
     url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata_attr'
-    result = urlfetch.fetch(url)
+    result = urlfetch.fetch(url,deadline=60)
     attr_details = json.loads(result.content)
     attr_list = attr_details['attribute_list']
 
     url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmattr'
-    result = urlfetch.fetch(url)
+    result = urlfetch.fetch(url,deadline=60)
     attributes = json.loads(result.content)
     attributes_list = attributes['items']
     clin_attr = []
