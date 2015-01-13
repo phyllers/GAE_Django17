@@ -1,25 +1,21 @@
+{% extends 'base.html' %}
 {% load staticfiles %}
-<!DOCTYPE html>
-<html>
 
-<head>
-
-  <meta charset="UTF-8">
-
-  <title>Animated Bubble Chart</title>
+{% block header %}
 
     <link rel="stylesheet" href="{% static 'css/style_cancer.css' %}" media="screen" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/color_key_cancer.css' %}" media="screen" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/overlays_cancer.css' %}" media="screen" type="text/css" />
     <link rel="stylesheet" href="{% static 'css/base_cancer.css' %}" media="screen" type="text/css" />
-</head>
 
-<body>
-
-  <script src="http://d3js.org/d3.v3.min.js"  charset="utf-8"></script>
+    <script src="http://d3js.org/d3.v3.min.js"  charset="utf-8"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
   <script src="{% static 'js/cancer.js' %}"></script>
   <script src="{% static 'js/base_cancer.js' %}"></script>
+{% endblock %}
+{% block content %}
+
+
 
   <div id="cancer-chartFrame">
     <div id="cancer-chart">
@@ -122,6 +118,4 @@
       <div id="cancer-chartCanvas"></div>
     </div>
   </div>
-</body>
-
-</html>
+{% endblock %}

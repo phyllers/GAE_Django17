@@ -3,11 +3,11 @@
  ********************************/
 body {
   margin: 0;
-  padding: 13px 0;
+  /*padding: 13px 0;*/
   font-family:nyt-franklin,nyt-franklin-1,'Helvetica Neue',Arial,sans-serif;
-  font-weight:400;
-  font-size:11px;
-  line-height:13px;
+  /*font-weight:400;*/
+  /*font-size:11px;*/
+  /*line-height:13px;*/
   color:#333
   background-color: #fff;
 }
@@ -73,7 +73,6 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;config/
 	assets.yml
 	settings.yml
-
 }
 
 #cancer-tooltipContainer {
