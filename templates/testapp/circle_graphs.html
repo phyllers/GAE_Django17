@@ -9,5 +9,13 @@
 
 {% endblock %}
 {% block content %}
-    <h1>hey world</h1>
+    <h1>Circle Graphs</h1>
+    {% for item in items %}
+        <h5>{{ item.name }}</h5>
+        {% for data_item in item.items %}
+            <p>{{ data_item.name}}: {{ data_item.count}}</p>
+        {% endfor %}
+        <br/>
+        <!--<pre>{{ item }}</pre>-->
+    {% endfor %}
 {% endblock %}
