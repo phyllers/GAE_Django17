@@ -1,45 +1,27 @@
 $(document).ready(function() {
-    var elements_selected = {};
-    var platforms_selected = {};
-    var tumors_selected = {};
 
-    var update_search = function(section, items) {
-        $('#'+ section +'-search-criteria').empty();
-        if (!$.isEmptyObject(items)) {
-            $('#'+ section +'-search-criteria').append('<h5>'+section+' selected:</h5');
-            $('#'+ section +'-search-criteria').append('<ul></ul>');
-            for (var e in items) {
-                var item = $('<li class="' + e + '">'+items[e]+'</li>');
-                $('#'+ section +'-search-criteria ul').append(item);
+    var search_criteria = {};
+
+
+    var update_search = function() {
+        $('#search-criteria').empty();
+        if (!$.isEmptyObject(search_criteria)) {
+            $('#search-criteria').append('<ul></ul>');
+            for (var e in search_criteria) {
+                var cat = e.split('-')[0];
+                var item = $('<li class=' + e + '">' + cat + ': ' + search_criteria[e].split(' - ')[1] + '</li>');
+                $('#search-criteria').append(item);
             }
         }
-    };
+    }
 
-    $('[name="elements-selected"]').on('change', function(){
+    $('.panel-body input[type=checkbox]').on('change', function() {
         if (this.checked) {
-            elements_selected[this.id] = this.labels[0].innerText.replace(/^\s+|\s+$/g, '');
+            search_criteria[this.id] = this.labels[0].innerText.replace(/^\s+|\s+$/g, '');
         } else {
-            delete elements_selected[this.id];
+            delete search_criteria[this.id];
         }
-        update_search('elements', elements_selected);
-    });
-
-    $('[name="platforms-selected"]').on('change', function(){
-        if (this.checked) {
-            platforms_selected[this.id] = this.labels[0].innerText.replace(/^\s+|\s+$/g, '');
-        } else {
-            delete platforms_selected[this.id];
-        }
-        update_search('platforms', platforms_selected);
-    });
-
-    $('[name="tumors-selected"]').on('change', function(){
-        if (this.checked) {
-            tumors_selected[this.id] = this.labels[0].innerText.replace(/^\s+|\s+$/g, '');
-        } else {
-            delete tumors_selected[this.id];
-        }
-        update_search('tumors', tumors_selected);
+        update_search();
     });
 
     $('#select-all').on('click', function() {
@@ -60,19 +42,11 @@ $(document).ready(function() {
         }
     })
 
-    $('#search-criteria').submit(function(e) {
+    $('#search-filters').submit(function(e) {
         $('<input />').attr('type', 'hidden')
-            .attr('name', 'elements_selected')
-            .attr('value', JSON.stringify(elements_selected))
-            .appendTo('#search-criteria');
-        $('<input />').attr('type', 'hidden')
-            .attr('name', 'platforms_selected')
-            .attr('value', JSON.stringify(platforms_selected))
-            .appendTo('#search-criteria');
-        $('<input />').attr('type', 'hidden')
-            .attr('name', 'tumors_selected')
-            .attr('value', JSON.stringify(tumors_selected))
-            .appendTo('#search-criteria');
+            .attr('name', 'search_filter')
+            .attr('value', JSON.stringify(search_criteria))
+            .appendTo('#search-filters');
         return true;
     })
 });

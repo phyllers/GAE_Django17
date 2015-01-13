@@ -16,9 +16,7 @@ from django.contrib.auth.decorators import login_required
 import django
 import json
 from google.appengine.api import urlfetch
-import time
-import requests
-urlfetch.set_default_fetch_deadline(45)
+urlfetch.set_default_fetch_deadline(60)
 
 gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config.json')
 
@@ -181,13 +179,13 @@ def search(request):
     #              {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
 
     url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata_attr'
-    req = Request(url)
-    attr_details = json.load(urlopen(req))
+    result = urlfetch.fetch(url)
+    attr_details = json.loads(result.content)
     attr_list = attr_details['attribute_list']
 
     url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmattr'
-    req = Request(url)
-    attributes = json.load(urlopen(req))
+    result = urlfetch.fetch(url)
+    attributes = json.loads(result.content)
     attributes_list = attributes['items']
     clin_attr = []
     samp_attr = []
@@ -223,19 +221,49 @@ def search(request):
 def search_results(request):
 
     if request.method == 'POST':
-        url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
+
+        search_filter = json.loads(request.POST['search_filter'])
+        search_dict = {}
+
+        # Aggregate filters by feature
+        for key in search_filter.keys():
+            catval = key.split('-')
+            if catval[0] in search_dict:
+                search_dict[catval[0]].append(catval[1])
+            else:
+                search_dict[catval[0]] = [catval[1]]
+        print search_dict
+
+        url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata?'
+
+        # construct url
+        for key, value in search_dict.items():
+            if len(value) > 1:
+                # create list
+                temp = value
+                value = '['
+                first = True
+                for item in temp:
+                    if first:
+                        value += item.encode('ascii', 'ignore')
+                        first = False
+                    else:
+                        value += ',' + item.encode('ascii', 'ignore')
+                value += ']'
+            else:
+                value = value[0].encode('ascii', 'ignore')
+            print value
+            url += key + '=' + str(value) + '&'
+
+        print url
+        # url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
         req = Request(url)
         results = json.load(urlopen(req))
         queries = {}
-
-        if 'elements_selected' in request.POST:
-            queries['elements_selected'] = json.loads(request.POST['elements_selected'])
-        if 'platforms_selected' in request.POST:
-            queries['platforms_selected'] = json.loads(request.POST['platforms_selected'])
-        if 'tumors_selected' in request.POST:
-            queries['tumors_selected'] = json.loads(request.POST['tumors_selected'])
+        total_rows = len(results['items'])
 
         return render(request,'testapp/search_results.html', {'request': request,
-                                                           'data': results,
-                                                           'queries': queries})
+                                                           'data': results['items'][:10],
+                                                           'api_url': url,
+                                                           'total_rows': total_rows})
 

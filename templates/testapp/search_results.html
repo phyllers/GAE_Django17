@@ -11,6 +11,9 @@
 
     <h2>Search Results Page</h2>
 
+    <h4>API URL: </h4> <p>{{ api_url }}</p>
+    <h4>TOTAL ROWS RETURNED: </h4> <p>{{ total_rows }}</p>
+    <p>Only showing first 10 results</p>
     <table class="table table-striped">
         <tr>
             <td><input type="checkbox" id="select-all" /></td>
@@ -20,47 +23,16 @@
             <td>Updated</td>
             <td></td>
         </tr>
-        {% for item in data.uuidBrowserData %}
+        {% for item in data %}
             <tr>
                 <td><input type="checkbox" /></td>
-                <td>{{ item.uuid }}</td>
-{#                metaDataString is literally a string of an object that needs to be parsed #}
-{#                <td>{{ item.metaDataString }}</td>#}
-                <td>{{ item.createDate }}</td>
-                <td>{{ item.updateDate }}</td>
+                <td>{{ item.sample }}</td>
+                <td>{{ item.disease_code }}</td>
                 <td></td>
             </tr>
         {% endfor %}
     </table>
 
     <a type="button" class="btn btn-primary" href="#">Save As Spreadsheet</a>
-    <br>
 
-    <h3>Searched Parameters</h3>
-    {% if queries.tumors_selected %}
-        <h5>Tumors Selected:</h5>
-        <ul>
-            {% for key, value in queries.tumors_selected.items %}
-                <li>{{ key }} - {{ value }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    {% if queries.elements_selected %}
-        <h5>Elements Selected:</h5>
-        <ul>
-            {% for key, value in queries.elements_selected.items %}
-                <li>{{ key }} - {{ value }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    {% if queries.platforms_selected %}
-        <h5>Platforms Selected:</h5>
-        <ul>
-            {% for key, value in queries.platforms_selected.items %}
-                <li>{{ key }} - {{ value }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
 {% endblock %}
