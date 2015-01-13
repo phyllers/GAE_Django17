@@ -16,8 +16,10 @@
 
         <div class="search-right-column" data-spy="affix" data-offset-top="125" data-offset-bottom="10">
             Search Criteria:
-            <div id="search-criteria"></div>
-        <form id="search-filters" method="post" action="{% url 'search_results' %}">
+            <div id="tumors-search-criteria"></div>
+            <div id="elements-search-criteria"></div>
+            <div id="platforms-search-criteria"></div>
+        <form id="search-criteria" method="post" action="{% url 'search_results' %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary space-top-10">Search</button>
         </form>
@@ -25,6 +27,8 @@
 
 
     <div class="search-left-column">
+
+        <input id="search-box" class="form-control" type="text" name="search-field" placeholder="Search" />
 
         <div class="panel panel-default">
             <div class="panel-heading">

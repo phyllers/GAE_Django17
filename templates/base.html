@@ -59,7 +59,7 @@
                 <!--<a href="/accounts/create_user/">Create User</a>-->
                 Hello,
                 {% if user.is_authenticated %}
-                    {{ user.first_name }} {{ user.last_name }}. You are logged in as
+                    Hello, {{ user.first_name }} {{ user.last_name }}. You are logged in as
                     {{ user.email }}
                     [<a href="/accounts/logout/">sign out</a>]
                 {% else %}
