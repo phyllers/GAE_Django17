@@ -10,10 +10,8 @@ from testapp import views
 admin.autodiscover()
 
 urlpatterns = patterns('',
-
-    url(r'^$', 'testapp.views.landing_page'),
     url(r'^testapp/', include('testapp.urls')),
-
+    url(r'^$', 'testapp.views.landing_page'),
     url(r'^accounts/profile/$', 'testapp.views.list_greetings'),
     url(r'^accounts/logout/$', 'testapp.views.user_logout'),
     url(r'^widget', 'testapp.views.widget', name='widget'),

@@ -21,6 +21,8 @@
         <!--}-->
       <!--);-->
     <!--</script>-->
+
+    <!-- note: The method below might be better handled on the server side by setting gtoken's max age as 0-->
     <!-- if the user is signed out of django... -->
     {% if not user.is_authenticated %}
         <script>
@@ -48,7 +50,7 @@
                 <li {% if request.path == '/search/' or request.path == '/search_results/' %}class="active"{% endif %}><a href="/search/">Search</a></li>
                 {% endif %}
                 <li {% if request.path == '/genespot-re/' %}class="active"{% endif %}><a href="/genespot-re/">Genespot-RE Styles</a></li>
-                <!--<li {% if request.path == '/css_test/' %}class="active"{% endif %}><a href="/css_test/">CSS</a></li>-->
+                <li {% if request.path == '/testapp/bubble_animation' %}class="active"{% endif %}><a href="/testapp/bubble_animation">Bubbles</a></li>
             </ul>
         </div>
         <div class="nav navbar-right">
