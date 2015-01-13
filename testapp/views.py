@@ -90,8 +90,11 @@ def landing_page(request):
                 last_name = None
                 gitkit_user_by_email = gitkit_instance.GetUserByEmail(gitkit_user.email)
                 if gitkit_user_by_email:
-                    first_name = gitkit_user_by_email.name.split(' ')[0]
-                    last_name = gitkit_user_by_email.name.split(' ')[1]
+                    if gitkit_user_by_email.name.find(' ') == -1:
+                        last_name = gitkit_user_by_email.name
+                    else:
+                        first_name = gitkit_user_by_email.name.split(' ')[0]
+                        last_name = gitkit_user_by_email.name.split(' ')[1]
                 try:
                     if User.objects.all():
                         id_number = User.objects.all().aggregate(Max('id'))['id__max']+1
