@@ -93,13 +93,17 @@ def landing_page(request):
                     first_name = gitkit_user_by_email.name.split(' ')[0]
                     last_name = gitkit_user_by_email.name.split(' ')[1]
                 try:
+                    if User.objects.all():
+                        id_number = User.objects.all().aggregate(Max('id'))['id__max']+1
+                    else:
+                        id_number = 1
                     User.objects.create_user(
                         # the primary key id is created manually here because django seems to try to use
                         # gitkit_user.user_id as the id field, which exceeds the maximum number of bytes
                         # allowed for mysql type int. The id's were then automatically set to the maximum
                         # number, 2147483647. An alternative solution would be to subclass User and make
                         # the id field type varchar instead of int
-                        id=User.objects.all().aggregate(Max('id'))['id__max']+1,
+                        id=id_number,
                         username=gitkit_user.email,
                         email=gitkit_user.email,
                         password=gitkit_user.user_id,
