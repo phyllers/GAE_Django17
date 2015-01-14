@@ -288,7 +288,10 @@ def circle_graphs(request):
     context_dict = {}
     url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmlanding?databy=diseasetype'
     req = Request(url)
-    results = json.load(urlopen(req))
-    context_dict['items'] = results['items']
+    try:
+        results = json.load(urlopen(req))
+        context_dict['items'] = results['items']
+    except URLError, e:
+        context_dict['error'] = e
     return render(request, 'testapp/circle_graphs.html', context_dict)
 
