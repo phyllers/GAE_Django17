@@ -8,5 +8,6 @@ env/*
 settings.py
 gitkit-server-config.json
 app.yaml
-
+*.tsv
+*.xls
 *.pem

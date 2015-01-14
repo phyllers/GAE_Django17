@@ -18,5 +18,9 @@
         <br/>
         <!--<pre>{{ item }}</pre>-->
     {% endfor %}
-    {{ error }}
+
+    {% if error %}
+        {{ error }}
+        <div id="d3-data"></div>
+    {% endif %}
 {% endblock %}
