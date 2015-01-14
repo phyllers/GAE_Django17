@@ -4,13 +4,13 @@ $(document).ready(function() {
 
 
     var update_search = function() {
-        $('#search-criteria').empty();
+        $('#search-list').empty();
         if (!$.isEmptyObject(search_criteria)) {
-            $('#search-criteria').append('<ul></ul>');
+            $('#search-list').append('<ul></ul>');
             for (var e in search_criteria) {
                 var cat = e.split('-')[0];
                 var item = $('<li class=' + e + '">' + cat + ': ' + search_criteria[e].split(' - ')[1] + '</li>');
-                $('#search-criteria').append(item);
+                $('#search-list').append(item);
             }
         }
     }
@@ -42,11 +42,11 @@ $(document).ready(function() {
         }
     })
 
-    $('#search-filters').submit(function(e) {
+    $('#search-criteria').submit(function(e) {
         $('<input />').attr('type', 'hidden')
             .attr('name', 'search_filter')
             .attr('value', JSON.stringify(search_criteria))
-            .appendTo('#search-filters');
+            .appendTo('#search-criteria');
         return true;
     })
 });

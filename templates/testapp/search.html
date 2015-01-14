@@ -16,10 +16,9 @@
 
         <div class="search-right-column" data-spy="affix" data-offset-top="125" data-offset-bottom="10">
             Search Criteria:
-            <div id="tumors-search-criteria"></div>
-            <div id="elements-search-criteria"></div>
-            <div id="platforms-search-criteria"></div>
-        <form id="search-criteria" method="post" action="{% url 'search_results' %}">
+
+            <div id="search-list"></div>
+            <form id="search-criteria" method="post" action="{% url 'search_results' %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-primary space-top-10">Search</button>
         </form>
@@ -28,7 +27,7 @@
 
     <div class="search-left-column">
 
-        <input id="search-box" class="form-control" type="text" name="search-field" placeholder="Search" />
+{#        <input id="search-box" class="form-control" type="text" name="search-field" placeholder="Search" />#}
 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -42,17 +41,19 @@
                 <div class="panel-body">
 
                     {% for attr in clin_attr %}
-                    <h5>{{ attr.attribute }}</h5>
-                    <ul class="search-checkbox-list">
-                        {% for v in attr_list|get_item:attr.attribute %}
-                            <li>
-                                <label for="{{ attr.attribute }}-{{ v.value }}">
-                                    <input type="checkbox" name="elements-selected" id="{{ attr.attribute }}-{{ v.value }}" >
-                                    {{ v.count }} - {{ v.value }}
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                        {% if attr.attribute in attr_list %}
+                            <h5>{{ attr.attribute }}</h5>
+                            <ul class="search-checkbox-list">
+                                {% for v in attr_list|get_item:attr.attribute %}
+                                    <li>
+                                        <label for="{{ attr.attribute }}-{{ v.value }}">
+                                            <input type="checkbox" name="elements-selected" id="{{ attr.attribute }}-{{ v.value }}" >
+                                            {{ v.count }} - {{ v.value }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -70,17 +71,19 @@
                 <div class="panel-body">
 
                     {% for attr in samp_attr %}
-                    <h5>{{ attr.attribute }}</h5>
-                    <ul class="search-checkbox-list">
-                        {% for v in attr_list|get_item:attr.attribute %}
-                            <li>
-                                <label for="{{ attr.attribute }}-{{ v.value }}">
-                                    <input type="checkbox" name="elements-selected" id="{{ attr.attribute }}-{{ v.value }}" >
-                                    {{ v.count }} - {{ v.value }}
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                        {% if attr.attribute in attr_list %}
+                            <h5>{{ attr.attribute }}</h5>
+                            <ul class="search-checkbox-list">
+                                {% for v in attr_list|get_item:attr.attribute %}
+                                    <li>
+                                        <label for="{{ attr.attribute }}-{{ v.value }}">
+                                            <input type="checkbox" name="elements-selected" id="{{ attr.attribute }}-{{ v.value }}" >
+                                            {{ v.count }} - {{ v.value }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -98,17 +101,19 @@
                 <div class="panel-body">
 
                     {% for attr in gnab_attr %}
-                    <h5>{{ attr.attribute }}</h5>
-                    <ul class="search-checkbox-list">
-                        {% for v in attr_list|get_item:attr.attribute %}
-                            <li>
-                                <label for="{{ attr.attribute }}-{{ v.value }}">
-                                    <input type="checkbox" name="elements-selected" id="{{ attr.attribute }}-{{ v.value }}" >
-                                    {{ v.count }} - {{ v.value }}
-                                </label>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                        {% if attr.attribute in attr_list %}
+                            <h5>{{ attr.attribute }}</h5>
+                            <ul class="search-checkbox-list">
+                                {% for v in attr_list|get_item:attr.attribute %}
+                                    <li>
+                                        <label for="{{ attr.attribute }}-{{ v.value }}">
+                                            <input type="checkbox" name="elements-selected" id="{{ attr.attribute }}-{{ v.value }}" >
+                                            {{ v.count }} - {{ v.value }}
+                                        </label>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

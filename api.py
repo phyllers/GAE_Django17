@@ -27,6 +27,39 @@ else:
     # Connecting to localhost
     db = MySQLdb.connect(host='127.0.0.1', port=3306, db='test', user='root')
 
+IMPORTANT_FEATURES = ['tumor_tissue_site',
+                    'gender',
+                    'vital_status',
+                    'country',
+                    'disease_code',
+                    'age_at_initial_pathologic_diagnosis',
+                    'TP53',
+                    'RB1',
+                    'NF1',
+                    'APC',
+                    'CTNNB1',
+                    'PIK3CA',
+                    'PTEN',
+                    'FBXW7',
+                    'NRAS',
+                    'ARID1A',
+                    'CDKN2A',
+                    'SMAD4',
+                    'BRAF',
+                    'NFE2L2',
+                    'IDH1',
+                    'PIK3R1',
+                    'HRAS',
+                    'EGFR',
+                    'BAP1',
+                    'KRAS',
+                    'DNAseq_data',
+                    'mirnPlatform',
+                    'cnvrPlatform',
+                    'methPlatform',
+                    'gexpPlatform',
+                    'rppaPlatform']
+
 class ReturnJSON(messages.Message):
     msg = messages.StringField(1)
 
@@ -111,8 +144,7 @@ class FMItem(messages.Message):
     gexpPlatform                         = messages.StringField(62)
     rppaPlatform                         = messages.StringField(63)
 
-class FMItemList(messages.Message):
-    items = messages.MessageField(FMItem, 1, repeated=True)
+
 
 class FMAttrValue(messages.Message):
     value = messages.StringField(1)
@@ -190,6 +222,10 @@ class FMSampleData(messages.Message):
     attribute_list = messages.MessageField(FMAttrValuesList, 1)
     total_samples = messages.IntegerField(2)
 
+class FMItemList(messages.Message):
+    items = messages.MessageField(FMItem, 1, repeated=True)
+    counts = messages.MessageField(FMAttrValuesList, 2)
+
 class FMLandingData(messages.Message):
     name = messages.StringField(1)
     count = messages.IntegerField(2)
@@ -200,6 +236,48 @@ class FMLandingGroup(messages.Message):
 
 class FMLandingDataList(messages.Message):
     items = messages.MessageField(FMLandingGroup, 1, repeated=True)
+
+def sql_age_by_ranges(key, value):
+    result = ''
+    if not isinstance(value, basestring):
+        #value is a list of ranges
+        first = True
+        for val in value:
+            if first:
+                result += ''
+                first = False
+            else: result += ' or'
+            if str(val) == '1to9':
+                result += ' (%s < 10)' % key
+            elif str(val) =='10to39':
+                result += ' (%s >= 10 and %s < 40)' % (key, key)
+            elif str(val) =='40to49':
+                result += ' (%s >= 40 and %s < 50)' % (key, key)
+            elif str(val) =='50to59':
+                result += ' (%s >= 50 and %s < 60)' % (key, key)
+            elif str(val) =='60to69':
+                result += ' (%s >= 60 and %s < 70)' % (key, key)
+            elif str(val) =='70to79':
+                result += ' (%s >= 70 and %s < 80)' % (key, key)
+            elif str(val) =='80andup':
+                result += ' (%s >= 80)' % (key, key)
+    else:
+        #value is a single range
+        if str(value) == '1to9':
+            result += ' (%s < 10)' % key
+        elif str(value) =='10to39':
+            result += ' (%s >= 10 and %s < 40)' % (key, key)
+        elif str(value) =='40to49':
+            result += ' (%s >= 40 and %s < 50)' % (key, key)
+        elif str(value) =='50to59':
+            result += ' (%s >= 50 and %s < 60)' % (key, key)
+        elif str(value) =='60to69':
+            result += ' (%s >= 60 and %s < 70)' % (key, key)
+        elif str(value) =='70to79':
+            result += ' (%s >= 70 and %s < 80)' % (key, key)
+        elif str(value) =='80andup':
+            result += ' (%s >= 80)' % (key, key)
+    return result
 
 @endpoints.api(name='gae_endpoints', version='v1',)
 class GAE_Endpoints_API(remote.Service):
@@ -318,7 +396,7 @@ class GAE_Endpoints_API(remote.Service):
     @endpoints.method(ID_RESOURCE, FMItem,
                       path='fmdata/{id}', http_method='GET',
                       name='fmdata.getFmdata')
-    def fmdata_get(self, request):
+    def fmdata_getone(self, request):
         try:
             cursor = db.cursor()
             cursor.execute('SELECT * FROM fmdata where sample="%s";' % request.id)
@@ -419,7 +497,9 @@ class GAE_Endpoints_API(remote.Service):
                     value = value.split(',')
                 if first:
                     first = False
-                    if not isinstance(value, basestring):
+                    if key == 'age_at_initial_pathologic_diagnosis':
+                        query_str += sql_age_by_ranges(key, value)
+                    elif not isinstance(value, basestring):
                         query_str += ' %s in (' % key
                         i = 0
                         for val in value:
@@ -432,8 +512,11 @@ class GAE_Endpoints_API(remote.Service):
                     else:
                         query_str += ' %s="%s"' % (key, value)
                 else:
-                    if not isinstance(value, basestring):
-                        query_str += ' and %s in (' % key
+                    query_str += ' and'
+                    if key == 'age_at_initial_pathologic_diagnosis':
+                            query_str += sql_age_by_ranges(key, value)
+                    elif not isinstance(value, basestring):
+                        query_str += ' %s in (' % key
                         i = 0
                         for val in value:
                             if i == 0:
@@ -443,158 +526,106 @@ class GAE_Endpoints_API(remote.Service):
                                 query_str += ',"' + val + '"'
                         query_str += ')'
                     else:
-                        query_str += ' and %s="%s"' % (key, value)
+                        query_str += ' %s="%s"' % (key, value)
+        query_str += ';'
         print query_str
+        counts = {}
+        for feature in IMPORTANT_FEATURES:
+            counts[feature] = {}
+
         try:
 
             cursor = db.cursor()
             cursor.execute(query_str)
             data = []
             for row in cursor.fetchall():
-                data.append(FMItem( sample                               = str(row[0]),
-                                    percent_lymphocyte_infiltration      = str(row[1]),
-                                    percent_monocyte_infiltration        = str(row[2]),
-                                    percent_necrosis                     = str(row[3]),
-                                    percent_neutrophil_infiltration      = str(row[4]),
-                                    percent_normal_cells                 = str(row[5]),
-                                    percent_stromal_cells                = str(row[6]),
-                                    percent_tumor_cells                  = str(row[7]),
-                                    percent_tumor_nuclei                 = str(row[8]),
-                                    gender                               = str(row[9]),
-                                    history_of_neoadjuvant_treatment     = str(row[10]),
-                                    icd_o_3_histology                    = str(row[11]),
-                                    prior_dx                             = str(row[12]),
-                                    vital_status                         = str(row[13]),
-                                    country                              = str(row[14]),
-                                    disease_code                         = str(row[15]),
-                                    histological_type                    = str(row[16]),
-                                    icd_10                               = str(row[17]),
-                                    icd_o_3_site                         = str(row[18]),
-                                    tumor_tissue_site                    = str(row[19]),
-                                    tumor_type                           = str(row[20]),
-                                    age_at_initial_pathologic_diagnosis  = str(row[21]),
-                                    days_to_birth                        = str(row[22]),
-                                    days_to_initial_pathologic_diagnosis = str(row[23]),
-                                    year_of_initial_pathologic_diagnosis = str(row[24]),
-                                    days_to_last_known_alive             = str(row[25]),
-                                    tumor_necrosis_percent               = str(row[26]),
-                                    tumor_nuclei_percent                 = str(row[27]),
-                                    tumor_weight                         = str(row[28]),
-                                    person_neoplasm_cancer_status        = str(row[29]),
-                                    pathologic_N                         = str(row[30]),
-                                    radiation_therapy                    = str(row[31]),
-                                    pathologic_T                         = str(row[32]),
-                                    race                                 = str(row[33]),
-                                    days_to_last_followup                = str(row[34]),
-                                    ethnicity                            = str(row[35]),
-                                    TP53                                 = str(row[36]),
-                                    RB1                                  = str(row[37]),
-                                    NF1                                  = str(row[38]),
-                                    APC                                  = str(row[39]),
-                                    CTNNB1                               = str(row[40]),
-                                    PIK3CA                               = str(row[41]),
-                                    PTEN                                 = str(row[42]),
-                                    FBXW7                                = str(row[43]),
-                                    NRAS                                 = str(row[44]),
-                                    ARID1A                               = str(row[45]),
-                                    CDKN2A                               = str(row[46]),
-                                    SMAD4                                = str(row[47]),
-                                    BRAF                                 = str(row[48]),
-                                    NFE2L2                               = str(row[49]),
-                                    IDH1                                 = str(row[50]),
-                                    PIK3R1                               = str(row[51]),
-                                    HRAS                                 = str(row[52]),
-                                    EGFR                                 = str(row[53]),
-                                    BAP1                                 = str(row[54]),
-                                    KRAS                                 = str(row[55]),
-                                    sampleType                           = str(row[56]),
-                                    DNAseq_data                          = str(row[57]),
-                                    mirnPlatform                         = str(row[58]),
-                                    cnvrPlatform                         = str(row[59]),
-                                    methPlatform                         = str(row[60]),
-                                    gexpPlatform                         = str(row[61]),
-                                    rppaPlatform                         = str(row[62]),
-                                    ))
-            cursor.close()
-            return FMItemList(items=data)
-        except (IndexError, TypeError):
-            raise endpoints.NotFoundException('Sample %s not found.' % (request.id,))
-
-
-
-
-
-
-    ID_RESOURCE = endpoints.ResourceContainer(
-        message_types.VoidMessage,
-        id=messages.StringField(1))
-    @endpoints.method(ID_RESOURCE, FMSampleData,
-                      path='fmdata_attr', http_method='GET',
-                      name='fmdata.getFmdata_attr')
-    def fmdata_get(self, request):
-        key_list = []
-
-        for key, value in FMItem.__dict__.items():
-            if not key.startswith('_') and not key == 'sample':
-                key_list.append(key)
-
-        try:
-            cursor = db.cursor()
-            query_str = 'SELECT COUNT(*) FROM fmdata'
-            cursor.execute(query_str)
-            total_samples = cursor.fetchone()[0]
-
-            value_list = {}
-            for key in key_list:
-                query_str = 'SELECT %s, count(%s) FROM fmdata GROUP BY %s;' % (key, key, key)
-                cursor.execute(query_str)
-
-                value_list[key] = []
-                count = 0
-                for row in cursor.fetchall():
-                    count += row[1]
-                    if type(row[0]) == long:
-                        value_list[key].append(ValueListCount(value=str(int(row[0])), count=row[1]))
+                item  = FMItem( sample                               = str(row[0]),
+                                percent_lymphocyte_infiltration      = str(row[1]),
+                                percent_monocyte_infiltration        = str(row[2]),
+                                percent_necrosis                     = str(row[3]),
+                                percent_neutrophil_infiltration      = str(row[4]),
+                                percent_normal_cells                 = str(row[5]),
+                                percent_stromal_cells                = str(row[6]),
+                                percent_tumor_cells                  = str(row[7]),
+                                percent_tumor_nuclei                 = str(row[8]),
+                                gender                               = str(row[9]),
+                                history_of_neoadjuvant_treatment     = str(row[10]),
+                                icd_o_3_histology                    = str(row[11]),
+                                prior_dx                             = str(row[12]),
+                                vital_status                         = str(row[13]),
+                                country                              = str(row[14]),
+                                disease_code                         = str(row[15]),
+                                histological_type                    = str(row[16]),
+                                icd_10                               = str(row[17]),
+                                icd_o_3_site                         = str(row[18]),
+                                tumor_tissue_site                    = str(row[19]),
+                                tumor_type                           = str(row[20]),
+                                age_at_initial_pathologic_diagnosis  = str(row[21]),
+                                days_to_birth                        = str(row[22]),
+                                days_to_initial_pathologic_diagnosis = str(row[23]),
+                                year_of_initial_pathologic_diagnosis = str(row[24]),
+                                days_to_last_known_alive             = str(row[25]),
+                                tumor_necrosis_percent               = str(row[26]),
+                                tumor_nuclei_percent                 = str(row[27]),
+                                tumor_weight                         = str(row[28]),
+                                person_neoplasm_cancer_status        = str(row[29]),
+                                pathologic_N                         = str(row[30]),
+                                radiation_therapy                    = str(row[31]),
+                                pathologic_T                         = str(row[32]),
+                                race                                 = str(row[33]),
+                                days_to_last_followup                = str(row[34]),
+                                ethnicity                            = str(row[35]),
+                                TP53                                 = str(row[36]),
+                                RB1                                  = str(row[37]),
+                                NF1                                  = str(row[38]),
+                                APC                                  = str(row[39]),
+                                CTNNB1                               = str(row[40]),
+                                PIK3CA                               = str(row[41]),
+                                PTEN                                 = str(row[42]),
+                                FBXW7                                = str(row[43]),
+                                NRAS                                 = str(row[44]),
+                                ARID1A                               = str(row[45]),
+                                CDKN2A                               = str(row[46]),
+                                SMAD4                                = str(row[47]),
+                                BRAF                                 = str(row[48]),
+                                NFE2L2                               = str(row[49]),
+                                IDH1                                 = str(row[50]),
+                                PIK3R1                               = str(row[51]),
+                                HRAS                                 = str(row[52]),
+                                EGFR                                 = str(row[53]),
+                                BAP1                                 = str(row[54]),
+                                KRAS                                 = str(row[55]),
+                                sampleType                           = str(row[56]),
+                                DNAseq_data                          = str(row[57]),
+                                mirnPlatform                         = str(row[58]),
+                                cnvrPlatform                         = str(row[59]),
+                                methPlatform                         = str(row[60]),
+                                gexpPlatform                         = str(row[61]),
+                                rppaPlatform                         = str(row[62]),
+                                )
+                for feature in IMPORTANT_FEATURES:
+                    value = item.__getattribute__(feature)
+                    if value in counts[feature].keys():
+                        counts[feature][value] += 1
                     else:
-                        value_list[key].append(ValueListCount(value=str(row[0]), count=row[1]))
+                        counts[feature][value] = 1
+
+                data.append(item)
+            cursor.close()
+            print counts
+            value_list = {}
+            for feature, values in counts.items():
+                value_list[feature] = []
+                for key, count in values.items():
+                    value_list[feature].append(ValueListCount(value=key, count=count))
 
             attr_list = FMAttrValuesList(
-                # sample                               = value_list['sample'],
-                                percent_lymphocyte_infiltration      = value_list['percent_lymphocyte_infiltration'],
-                                percent_monocyte_infiltration        = value_list['percent_monocyte_infiltration'],
-                                percent_necrosis                     = value_list['percent_necrosis'],
-                                percent_neutrophil_infiltration      = value_list['percent_neutrophil_infiltration'],
-                                percent_normal_cells                 = value_list['percent_normal_cells'],
-                                percent_stromal_cells                = value_list['percent_stromal_cells'],
-                                percent_tumor_cells                  = value_list['percent_tumor_cells'],
-                                percent_tumor_nuclei                 = value_list['percent_tumor_nuclei'],
                                 gender                               = value_list['gender'],
-                                history_of_neoadjuvant_treatment     = value_list['history_of_neoadjuvant_treatment'],
-                                icd_o_3_histology                    = value_list['icd_o_3_histology'],
-                                prior_dx                             = value_list['prior_dx'],
                                 vital_status                         = value_list['vital_status'],
                                 country                              = value_list['country'],
                                 disease_code                         = value_list['disease_code'],
-                                histological_type                    = value_list['histological_type'],
-                                icd_10                               = value_list['icd_10'],
-                                icd_o_3_site                         = value_list['icd_o_3_site'],
                                 tumor_tissue_site                    = value_list['tumor_tissue_site'],
-                                tumor_type                           = value_list['tumor_type'],
                                 age_at_initial_pathologic_diagnosis  = value_list['age_at_initial_pathologic_diagnosis'],
-                                days_to_birth                        = value_list['days_to_birth'],
-                                days_to_initial_pathologic_diagnosis = value_list['days_to_initial_pathologic_diagnosis'],
-                                year_of_initial_pathologic_diagnosis = value_list['year_of_initial_pathologic_diagnosis'],
-                                days_to_last_known_alive             = value_list['days_to_last_known_alive'],
-                                tumor_necrosis_percent               = value_list['tumor_necrosis_percent'],
-                                tumor_nuclei_percent                 = value_list['tumor_nuclei_percent'],
-                                tumor_weight                         = value_list['tumor_weight'],
-                                person_neoplasm_cancer_status        = value_list['person_neoplasm_cancer_status'],
-                                pathologic_N                         = value_list['pathologic_N'],
-                                radiation_therapy                    = value_list['radiation_therapy'],
-                                pathologic_T                         = value_list['pathologic_T'],
-                                race                                 = value_list['race'],
-                                days_to_last_followup                = value_list['days_to_last_followup'],
-                                ethnicity                            = value_list['ethnicity'],
                                 TP53                                 = value_list['TP53'],
                                 RB1                                  = value_list['RB1'],
                                 NF1                                  = value_list['NF1'],
@@ -615,7 +646,108 @@ class GAE_Endpoints_API(remote.Service):
                                 EGFR                                 = value_list['EGFR'],
                                 BAP1                                 = value_list['BAP1'],
                                 KRAS                                 = value_list['KRAS'],
-                                sampleType                           = value_list['sampleType'],
+                                DNAseq_data                          = value_list['DNAseq_data'],
+                                mirnPlatform                         = value_list['mirnPlatform'],
+                                cnvrPlatform                         = value_list['cnvrPlatform'],
+                                methPlatform                         = value_list['methPlatform'],
+                                gexpPlatform                         = value_list['gexpPlatform'],
+                                rppaPlatform                         = value_list['rppaPlatform'],
+                                )
+            return FMItemList(items=data,counts=attr_list)
+        except (IndexError, TypeError):
+            raise endpoints.NotFoundException('Sample %s not found.' % (request.id,))
+
+
+
+
+
+
+    ID_RESOURCE = endpoints.ResourceContainer(
+        message_types.VoidMessage,
+        id=messages.StringField(1))
+    @endpoints.method(ID_RESOURCE, FMSampleData,
+                      path='fmdata_attr', http_method='GET',
+                      name='fmdata.getFmdata_attr')
+    def fmdata_get(self, request):
+
+        try:
+            cursor = db.cursor()
+            query_str = 'SELECT COUNT(*) FROM fmdata'
+            cursor.execute(query_str)
+            total_samples = cursor.fetchone()[0]
+
+            value_list = {}
+            for key in IMPORTANT_FEATURES:
+                query_str = 'SELECT %s, count(%s) FROM fmdata GROUP BY %s;' % (key, key, key)
+                cursor.execute(query_str)
+
+                value_list[key] = []
+                count = 0
+                for row in cursor.fetchall():
+                    count += row[1]
+                    if type(row[0]) == long:
+                        value_list[key].append(ValueListCount(value=str(int(row[0])), count=row[1]))
+                    else:
+                        value_list[key].append(ValueListCount(value=str(row[0]), count=row[1]))
+
+            attr_list = FMAttrValuesList(
+                #                 sample                               = value_list['sample'],
+                #                 percent_lymphocyte_infiltration      = value_list['percent_lymphocyte_infiltration'],
+                #                 percent_monocyte_infiltration        = value_list['percent_monocyte_infiltration'],
+                #                 percent_necrosis                     = value_list['percent_necrosis'],
+                #                 percent_neutrophil_infiltration      = value_list['percent_neutrophil_infiltration'],
+                #                 percent_normal_cells                 = value_list['percent_normal_cells'],
+                #                 percent_stromal_cells                = value_list['percent_stromal_cells'],
+                #                 percent_tumor_cells                  = value_list['percent_tumor_cells'],
+                #                 percent_tumor_nuclei                 = value_list['percent_tumor_nuclei'],
+                                gender                               = value_list['gender'],
+                #                 history_of_neoadjuvant_treatment     = value_list['history_of_neoadjuvant_treatment'],
+                #                 icd_o_3_histology                    = value_list['icd_o_3_histology'],
+                #                 prior_dx                             = value_list['prior_dx'],
+                                vital_status                         = value_list['vital_status'],
+                                country                              = value_list['country'],
+                                disease_code                         = value_list['disease_code'],
+                #                 histological_type                    = value_list['histological_type'],
+                #                 icd_10                               = value_list['icd_10'],
+                #                 icd_o_3_site                         = value_list['icd_o_3_site'],
+                                tumor_tissue_site                    = value_list['tumor_tissue_site'],
+                #                 tumor_type                           = value_list['tumor_type'],
+                                age_at_initial_pathologic_diagnosis  = value_list['age_at_initial_pathologic_diagnosis'],
+                #                 days_to_birth                        = value_list['days_to_birth'],
+                #                 days_to_initial_pathologic_diagnosis = value_list['days_to_initial_pathologic_diagnosis'],
+                #                 year_of_initial_pathologic_diagnosis = value_list['year_of_initial_pathologic_diagnosis'],
+                #                 days_to_last_known_alive             = value_list['days_to_last_known_alive'],
+                #                 tumor_necrosis_percent               = value_list['tumor_necrosis_percent'],
+                #                 tumor_nuclei_percent                 = value_list['tumor_nuclei_percent'],
+                #                 tumor_weight                         = value_list['tumor_weight'],
+                #                 person_neoplasm_cancer_status        = value_list['person_neoplasm_cancer_status'],
+                #                 pathologic_N                         = value_list['pathologic_N'],
+                #                 radiation_therapy                    = value_list['radiation_therapy'],
+                #                 pathologic_T                         = value_list['pathologic_T'],
+                #                 race                                 = value_list['race'],
+                #                 days_to_last_followup                = value_list['days_to_last_followup'],
+                #                 ethnicity                            = value_list['ethnicity'],
+                                TP53                                 = value_list['TP53'],
+                                RB1                                  = value_list['RB1'],
+                                NF1                                  = value_list['NF1'],
+                                APC                                  = value_list['APC'],
+                                CTNNB1                               = value_list['CTNNB1'],
+                                PIK3CA                               = value_list['PIK3CA'],
+                                PTEN                                 = value_list['PTEN'],
+                                FBXW7                                = value_list['FBXW7'],
+                                NRAS                                 = value_list['NRAS'],
+                                ARID1A                               = value_list['ARID1A'],
+                                CDKN2A                               = value_list['CDKN2A'],
+                                SMAD4                                = value_list['SMAD4'],
+                                BRAF                                 = value_list['BRAF'],
+                                NFE2L2                               = value_list['NFE2L2'],
+                                IDH1                                 = value_list['IDH1'],
+                                PIK3R1                               = value_list['PIK3R1'],
+                                HRAS                                 = value_list['HRAS'],
+                                EGFR                                 = value_list['EGFR'],
+                                BAP1                                 = value_list['BAP1'],
+                                KRAS                                 = value_list['KRAS'],
+                #                 sampleType                           = value_list['sampleType'],
                                 DNAseq_data                          = value_list['DNAseq_data'],
                                 mirnPlatform                         = value_list['mirnPlatform'],
                                 cnvrPlatform                         = value_list['cnvrPlatform'],

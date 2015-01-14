@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load custom_tags %}
 
 {% block header %}
 {#<link type="text/css" rel="stylesheet" href="{% static 'css/search.css' %}" />#}
@@ -32,5 +33,13 @@
     </table>
 
     <a type="button" class="btn btn-primary" href="#">Save As Spreadsheet</a>
+    {% for feature in counts %}
+        <h5>{{ feature }}</h5>
+        <ul>
+            {% for item in counts|get_item:feature %}
+                <li>{{ item.count }} - {{ item.value }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
 
 {% endblock %}

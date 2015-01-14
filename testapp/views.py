@@ -15,13 +15,42 @@ from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 import django
 import json
+import os
+
 from google.appengine.api import urlfetch
 urlfetch.set_default_fetch_deadline(60)
 
 gitkit_instance = gitkitclient.GitkitClient.FromConfigFile('gitkit-server-config.json')
 
 MEMCACHE_GREETINGS = 'greetings'
+if os.getenv('SERVER_SOFTWARE', '').startswith('Google App Engine'):
+    API_URL = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1'
+else:
+    API_URL = 'http://localhost:8080/_ah/api/gae_endpoints/v1'
 
+def normalize_ages(ages):
+    result = []
+    new_age_list = {'1 to 9': 0, '10 to 39': 0, '40 to 49': 0, '50 to 59': 0, '60 to 69': 0, '70 to 79': 0, '80 and up': 0, 'None': 0}
+    for age in ages:
+        if age['value'] != 'None':
+            int_age = float(age['value'])
+            if int_age < 10:
+                new_age_list['1 to 9'] += int(age['count'])
+            elif int_age < 40:
+                new_age_list['10 to 39'] += int(age['count'])
+            elif int_age < 50:
+                new_age_list['40 to 49'] += int(age['count'])
+            elif int_age < 60:
+                new_age_list['50 to 59'] += int(age['count'])
+            elif int_age < 70:
+                new_age_list['60 to 69'] += int(age['count'])
+            elif int_age < 80:
+                new_age_list['70 to 79'] += int(age['count'])
+            else:
+                new_age_list['80 and up'] += int(age['count'])
+    for key, value in new_age_list.items():
+        result.append({'count': value, 'value': key})
+    return result
 
 def genespotre(request):
     return render(request, 'testapp/genespot-re-demo.html', {})
@@ -185,12 +214,23 @@ def search(request):
     #              {'id': 10, 'label': 'HumanMethylation27'},
     #              {'id': 11, 'label': 'IlluminaDNAMethylation_OMA002_CPI'}]
 
-    url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata_attr'
+    url = API_URL + '/fmdata_attr'
     result = urlfetch.fetch(url,deadline=60)
     attr_details = json.loads(result.content)
-    attr_list = attr_details['attribute_list']
 
-    url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmattr'
+    if 'attribute_list' in attr_details:
+        attr_list = attr_details['attribute_list']
+
+        ages = attr_list['age_at_initial_pathologic_diagnosis']
+
+        attr_list['age_at_initial_pathologic_diagnosis'] = normalize_ages(ages)
+
+    else:
+        attr_list = {}
+
+
+
+    url = API_URL + '/fmattr'
     result = urlfetch.fetch(url,deadline=60)
     attributes = json.loads(result.content)
     attributes_list = attributes['items']
@@ -239,9 +279,9 @@ def search_results(request):
                 search_dict[catval[0]].append(catval[1])
             else:
                 search_dict[catval[0]] = [catval[1]]
-        print search_dict
+        # print search_dict
 
-        url = 'https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata?'
+        url = API_URL + '/fmdata?'
 
         # construct url
         for key, value in search_dict.items():
@@ -259,20 +299,24 @@ def search_results(request):
                 value += ']'
             else:
                 value = value[0].encode('ascii', 'ignore')
-            print value
-            url += key + '=' + str(value) + '&'
+            url += key + '=' + str(value.replace(' ','')) + '&'
 
-        print url
+        # print url
         # url = 'https://tcga-data.nci.nih.gov/uuid/uuidBrowser.json?_dc=1418770411240&start=0&limit=10'
-        req = Request(url)
-        results = json.load(urlopen(req))
-        queries = {}
+        result = urlfetch.fetch(url,deadline=60)
+        results = json.loads(result.content)
+        # queries = {}
         total_rows = len(results['items'])
+        counts = results['counts']
 
-        return render(request,'testapp/search_results.html', {'request': request,
-                                                           'data': results['items'][:10],
-                                                           'api_url': url,
-                                                           'total_rows': total_rows})
+        if 'age_at_initial_pathologic_diagnosis' in counts:
+            counts['age_at_initial_pathologic_diagnosis'] = normalize_ages(counts['age_at_initial_pathologic_diagnosis'])
+
+        return render(request,'testapp/search_results.html', { 'request':       request,
+                                                               'data':          results['items'][:10],
+                                                               'api_url':       url,
+                                                               'total_rows':    total_rows,
+                                                               'counts':        counts})
 
 
 def bubble_animation(request):
