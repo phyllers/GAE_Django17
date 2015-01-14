@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block header %}
+
+
+  <script src="http://d3js.org/d3.v3.min.js"  charset="utf-8"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{% static 'js/cancer.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <h1>Circle Graphs</h1>
+    {% for item in items %}
+        <h5>{{ item.name }}</h5>
+        {% for data_item in item.items %}
+            <p>{{ data_item.name}}: {{ data_item.count}}</p>
+        {% endfor %}
+        <br/>
+        <!--<pre>{{ item }}</pre>-->
+    {% endfor %}
+
+    {% if error %}
+        {{ error }}
+        <div id="d3-data"></div>
+    {% endif %}
+{% endblock %}

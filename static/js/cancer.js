@@ -1,5 +1,10 @@
 d3.json("https://isb-cgc.appspot.com/_ah/api/gae_endpoints/v1/fmdata?disease_code=BLCA", function (error,json) {
-    if (error) return console.warn(error);
+    if (error) {
+        d3.select('#cancer-chartCanvas')
+            .html('<p>HTTP Error ' + error['status'] + ': ' + error['statusText']+'</p>');
+        d3.select('#cancer-overlays').style("display", "none");
+        return console.warn(error);
+    }
     cancer.mutation_array_data = json['items'];
     do_everything();
 });
